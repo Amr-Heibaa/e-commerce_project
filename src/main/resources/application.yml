@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: ecommerence_project
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/flyway_db
+    username: root
+    password:
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+jwt:
+  secret: dGhpcy1pcy1hLXZlcnktc2VjcmV0LWtleS1mb3ItcGVyZnVtZS1zdG9yZS1qd3Q=
+  expiration: 86400000
