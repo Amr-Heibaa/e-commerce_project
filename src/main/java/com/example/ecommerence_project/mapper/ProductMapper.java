@@ -1,12 +1,17 @@
 package com.example.ecommerence_project.mapper;
 
-
-
+import com.example.ecommerence_project.dto.request.ProductImageRequest;
 import com.example.ecommerence_project.dto.request.ProductRequest;
+import com.example.ecommerence_project.dto.response.ProductImageResponse;
 import com.example.ecommerence_project.dto.response.ProductResponse;
 import com.example.ecommerence_project.entity.Category;
 import com.example.ecommerence_project.entity.Product;
+import com.example.ecommerence_project.entity.ProductImage;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class ProductMapper {
@@ -34,6 +39,48 @@ public class ProductMapper {
             response.setCategoryId(product.getCategory().getId());
         }
 
+        // map images
+        if (product.getImages() != null) {
+            List<ProductImageResponse> imageResponses = product.getImages()
+                    .stream()
+                    .map(this::imageToResponse)
+                    .collect(Collectors.toList());
+
+            response.setImages(imageResponses);
+
+            product.getImages().stream()
+                    .filter(img -> Boolean.TRUE.equals(img.getIsPrimary()))
+                    .findFirst()
+                    .ifPresent(img -> response.setPrimaryImage(imageToResponse(img)));
+        } else {
+            response.setImages(Collections.emptyList());
+        }
+
+        return response;
+    }
+
+    // ----------------------------------------------------------------
+    //  Image mapping
+    // ----------------------------------------------------------------
+
+    public ProductImage imageToEntity(ProductImageRequest request, Product product) {
+        return ProductImage.builder()
+                .imageUrl(request.getImageUrl())
+                .altText(request.getAltText())
+                .displayOrder(request.getDisplayOrder())
+                .isPrimary(false)
+                .product(product)
+                .build();
+    }
+
+    public ProductImageResponse imageToResponse(ProductImage image) {
+        ProductImageResponse response = new ProductImageResponse();
+        response.setId(image.getId());
+        response.setImageUrl(image.getImageUrl());
+        response.setAltText(image.getAltText());
+        response.setDisplayOrder(image.getDisplayOrder());
+        response.setIsPrimary(image.getIsPrimary());
+        response.setCreatedAt(image.getCreatedAt());
         return response;
     }
 }
