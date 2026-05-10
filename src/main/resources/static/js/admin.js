@@ -317,3 +317,161 @@ async function deleteAdminProduct(id) {
         showAdminMessage('productMessage', error.message, 'error');
     }
 }
+
+/* =========================
+   Users
+========================= */
+
+async function loadAdminUsers() {
+    const container = document.getElementById('adminUsersTable');
+    if (!container) return;
+
+    try {
+        const users = normalizeList(await api.get('/admin/users'));
+
+        if (users.length === 0) {
+            container.innerHTML = `<p class="text-gray-400">No users found.</p>`;
+            return;
+        }
+
+        container.innerHTML = users.map(adminUserRow).join('');
+    } catch (error) {
+        container.innerHTML = `<p class="text-red-300">${error.message}</p>`;
+    }
+}
+
+function adminUserRow(user) {
+    const fullName = user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User';
+    const roles = user.roles || [];
+
+    return `
+    <div class="border border-yellow-500/20 rounded-2xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <p class="gold-text text-xs uppercase tracking-[0.25em] mb-2">User #${user.id || user.userId}</p>
+        <h3 class="text-xl font-serif">${fullName}</h3>
+        <p class="text-gray-400 text-sm">${user.email || ''}</p>
+
+        <div class="flex flex-wrap gap-2 mt-3">
+          ${roles.map(role => `
+            <span class="rounded-full border border-yellow-500/20 px-3 py-1 text-xs gold-text">${role}</span>
+          `).join('')}
+
+          <span class="rounded-full px-3 py-1 text-xs ${
+        user.enabled === false ? 'bg-red-500/20 text-red-300' : 'bg-green-500/20 text-green-300'
+    }">
+            ${user.enabled === false ? 'Disabled' : 'Enabled'}
+          </span>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <button onclick="toggleUserStatus(${user.id || user.userId}, ${user.enabled !== false})" class="outline-gold rounded-xl px-4 py-2">
+          ${user.enabled === false ? 'Enable' : 'Disable'}
+        </button>
+
+        <button onclick="deleteAdminUser(${user.id || user.userId})" class="rounded-xl px-4 py-2 border border-red-400/40 text-red-300 hover:bg-red-500/10">
+          Delete
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+async function toggleUserStatus(userId, currentlyEnabled) {
+    try {
+        const endpoint = currentlyEnabled
+            ? `/admin/users/${userId}/disable`
+            : `/admin/users/${userId}/enable`;
+
+        await api.patch(endpoint, {});
+        showAdminMessage('userMessage', `User ${currentlyEnabled ? 'disabled' : 'enabled'} successfully.`);
+        await loadAdminUsers();
+    } catch (error) {
+        showAdminMessage('userMessage', error.message, 'error');
+    }
+}
+
+async function deleteAdminUser(userId) {
+    if (!confirm('Are you sure you want to delete this user?')) return;
+
+    try {
+        await api.delete(`/admin/users/${userId}`);
+        showAdminMessage('userMessage', 'User deleted successfully.');
+        await loadAdminUsers();
+    } catch (error) {
+        showAdminMessage('userMessage', error.message, 'error');
+    }
+}
+
+/* =========================
+   Refunds
+========================= */
+
+async function loadAdminRefunds() {
+    const container = document.getElementById('adminRefundsTable');
+    if (!container) return;
+
+    try {
+        const refunds = normalizeList(await api.get('/admin/refunds'));
+
+        if (refunds.length === 0) {
+            container.innerHTML = `<p class="text-gray-400">No refund requests found.</p>`;
+            return;
+        }
+
+        container.innerHTML = refunds.map(adminRefundRow).join('');
+    } catch (error) {
+        container.innerHTML = `<p class="text-red-300">${error.message}</p>`;
+    }
+}
+
+function adminRefundRow(refund) {
+    const id = refund.id || refund.refundId;
+    const status = refund.status || refund.refundStatus || 'PENDING';
+
+    return `
+    <div class="border border-yellow-500/20 rounded-2xl p-5">
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
+        <div>
+          <p class="gold-text text-xs uppercase tracking-[0.25em] mb-2">Refund #${id}</p>
+          <h3 class="text-xl font-serif">Order #${refund.orderId || refund.order?.id || 'N/A'}</h3>
+          <p class="text-gray-400 text-sm mt-2">${refund.reason || 'No reason provided'}</p>
+        </div>
+
+        <span class="rounded-full px-4 py-2 text-sm ${
+        status === 'APPROVED'
+            ? 'bg-green-500/20 text-green-300'
+            : status === 'REJECTED'
+                ? 'bg-red-500/20 text-red-300'
+                : 'bg-yellow-500/20 text-yellow-300'
+    }">
+          ${status}
+        </span>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <button onclick="updateRefundStatus(${id}, 'APPROVED')" class="outline-gold rounded-xl px-4 py-2">
+          Approve
+        </button>
+
+        <button onclick="updateRefundStatus(${id}, 'REJECTED')" class="rounded-xl px-4 py-2 border border-red-400/40 text-red-300 hover:bg-red-500/10">
+          Reject
+        </button>
+
+        <button onclick="updateRefundStatus(${id}, 'PENDING')" class="rounded-xl px-4 py-2 border border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/10">
+          Mark Pending
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+async function updateRefundStatus(refundId, status) {
+    try {
+        await api.patch(`/admin/refunds/${refundId}/status`, { status });
+        showAdminMessage('refundMessage', `Refund marked as ${status}.`);
+        await loadAdminRefunds();
+    } catch (error) {
+        showAdminMessage('refundMessage', error.message, 'error');
+    }
+}

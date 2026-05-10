@@ -90,10 +90,18 @@ const api = {
             body: JSON.stringify(body)
         });
     },
+    
+    patch(endpoint, body) {
+        return this.request(endpoint, {
+            method: 'PATCH',
+            body: JSON.stringify(body)
+        });
+    },
 
     delete(endpoint) {
         return this.request(endpoint, {
             method: 'DELETE'
         });
     }
+
 };

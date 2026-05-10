@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Admin Refunds | Perfume Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body class="bg-black text-white">
+
+<header class="navbar px-8 py-4 flex justify-between items-center border-b border-yellow-500/20">
+    <a href="/admin-dashboard.html" class="text-2xl font-serif gold-text">Perfume Admin</a>
+
+    <nav class="hidden md:flex gap-6 text-sm uppercase tracking-widest">
+        <a href="/admin-dashboard.html" class="hover:text-yellow-400">Dashboard</a>
+        <a href="/admin-categories.html" class="hover:text-yellow-400">Categories</a>
+        <a href="/admin-products.html" class="hover:text-yellow-400">Products</a>
+        <a href="/admin-orders.html" class="hover:text-yellow-400">Orders</a>
+        <a href="/admin-users.html" class="hover:text-yellow-400">Users</a>
+        <a href="/admin-refunds.html" class="gold-text">Refunds</a>
+    </nav>
+
+    <button onclick="api.logout()" class="gold-text text-sm">Logout</button>
+</header>
+
+<main class="px-8 py-12">
+    <div class="mb-10">
+        <p class="gold-text uppercase tracking-[0.3em] text-sm mb-3">Support</p>
+        <h1 class="text-5xl font-serif">Manage Refund Requests</h1>
+    </div>
+
+    <div id="refundMessage" class="hidden mb-6 rounded-xl px-4 py-3 text-sm"></div>
+
+    <section class="glass-card rounded-3xl p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-serif gold-text">Refund Requests</h2>
+            <button onclick="loadAdminRefunds()" class="outline-gold rounded-xl px-4 py-2">Refresh</button>
+        </div>
+
+        <div id="adminRefundsTable" class="space-y-4"></div>
+    </section>
+</main>
+
+<script src="/js/api.js"></script>
+<script src="/js/admin.js"></script>
+<script>
+    requireAdminPage();
+    loadAdminRefunds();
+</script>
+
+</body>
+</html>
