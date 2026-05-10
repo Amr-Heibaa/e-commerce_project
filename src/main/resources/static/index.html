@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Perfume Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body class="bg-black text-white">
+
+<header class="navbar fixed top-0 left-0 w-full z-50 px-8 py-4 flex justify-between items-center">
+    <a href="/index.html" class="text-2xl font-serif gold-text">Perfume Store</a>
+
+    <nav class="hidden md:flex gap-8 text-sm uppercase tracking-widest">
+        <a href="/index.html" class="gold-text">Home</a>
+        <a href="/products.html" class="hover:text-yellow-400">Products</a>
+        <a href="/cart.html" class="hover:text-yellow-400">Cart</a>
+        <a href="/my-orders.html" class="gold-text">My Orders</a>
+
+
+    </nav>
+
+    <div id="authLinks" class="text-sm"></div>
+</header>
+
+<section class="luxury-bg min-h-screen flex items-center px-8 pt-24">
+    <div class="max-w-3xl">
+        <p class="gold-text uppercase tracking-[0.4em] mb-4">Luxury Fragrance</p>
+        <h1 class="text-5xl md:text-7xl font-serif leading-tight mb-6">
+            Discover Your <span class="gold-text">Signature Scent</span>
+        </h1>
+        <p class="text-gray-300 text-lg max-w-xl mb-8">
+            Explore elegant perfumes crafted for unforgettable moments.
+        </p>
+
+        <a href="/products.html" class="gold-btn inline-block rounded-full px-8 py-4">
+            Shop Collection
+        </a>
+    </div>
+</section>
+
+<section class="px-8 py-20 bg-[#0d0d0d]">
+    <div class="text-center mb-12">
+        <p class="gold-text uppercase tracking-[0.3em] text-sm mb-3">Featured</p>
+        <h2 class="text-4xl font-serif">New Arrivals</h2>
+    </div>
+
+    <div id="featuredProducts" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+</section>
+
+<script src="/js/api.js"></script>
+<script src="/js/products.js"></script>
+<script>
+    renderAuthLinks();
+    loadFeaturedProducts();
+</script>
+
+</body>
+</html>

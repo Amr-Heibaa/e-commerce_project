@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Admin Categories | Perfume Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body class="bg-black text-white">
+
+<header class="navbar px-8 py-4 flex justify-between items-center border-b border-yellow-500/20">
+    <a href="/admin-dashboard.html" class="text-2xl font-serif gold-text">Perfume Admin</a>
+
+    <nav class="hidden md:flex gap-6 text-sm uppercase tracking-widest">
+        <a href="/admin-dashboard.html" class="hover:text-yellow-400">Dashboard</a>
+        <a href="/admin-categories.html" class="gold-text">Categories</a>
+        <a href="/admin-products.html" class="hover:text-yellow-400">Products</a>
+        <a href="/admin-orders.html" class="hover:text-yellow-400">Orders</a>
+        <a href="/admin-users.html" class="hover:text-yellow-400">Users</a>
+        <a href="/admin-refunds.html" class="hover:text-yellow-400">Refunds</a>
+    </nav>
+
+    <button onclick="api.logout()" class="gold-text text-sm">Logout</button>
+</header>
+
+<main class="px-8 py-12">
+    <div class="mb-10">
+        <p class="gold-text uppercase tracking-[0.3em] text-sm mb-3">Catalog</p>
+        <h1 class="text-5xl font-serif">Manage Categories</h1>
+    </div>
+
+    <div id="categoryMessage" class="hidden mb-6 rounded-xl px-4 py-3 text-sm"></div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <form onsubmit="saveCategory(event)" class="glass-card rounded-3xl p-6 h-fit">
+            <h2 id="categoryFormTitle" class="text-2xl font-serif gold-text mb-6">Add Category</h2>
+
+            <input type="hidden" name="categoryId" />
+
+            <div class="mb-5">
+                <label class="block text-sm mb-2 text-gray-300">Category Name</label>
+                <input name="name" required class="input-luxury w-full rounded-xl px-4 py-3" />
+            </div>
+
+            <div class="mb-5">
+                <label class="block text-sm mb-2 text-gray-300">Description</label>
+                <textarea name="description" rows="4" class="input-luxury w-full rounded-xl px-4 py-3"></textarea>
+            </div>
+
+            <button class="gold-btn w-full rounded-xl py-3 mb-3">
+                Save Category
+            </button>
+
+            <button type="button" onclick="resetCategoryForm()" class="outline-gold w-full rounded-xl py-3">
+                Clear
+            </button>
+        </form>
+
+        <section class="lg:col-span-2 glass-card rounded-3xl p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-serif gold-text">Categories</h2>
+                <button onclick="loadCategories()" class="outline-gold rounded-xl px-4 py-2">Refresh</button>
+            </div>
+
+            <div id="categoriesTable" class="space-y-4"></div>
+        </section>
+    </div>
+</main>
+
+<script src="/js/api.js"></script>
+<script src="/js/admin.js"></script>
+<script>
+    requireAdminPage();
+    loadCategories();
+</script>
+
+</body>
+</html>

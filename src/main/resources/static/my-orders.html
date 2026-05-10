@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>My Orders | Perfume Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body class="bg-black text-white">
+
+<header class="navbar px-8 py-4 flex justify-between items-center border-b border-yellow-500/20">
+    <a href="/index.html" class="text-2xl font-serif gold-text">Perfume Store</a>
+
+    <nav class="hidden md:flex gap-8 text-sm uppercase tracking-widest">
+        <a href="/index.html" class="hover:text-yellow-400">Home</a>
+        <a href="/products.html" class="hover:text-yellow-400">Products</a>
+        <a href="/cart.html" class="hover:text-yellow-400">Cart</a>
+        <a href="/my-orders.html" class="gold-text">My Orders</a>
+    </nav>
+
+    <div id="authLinks" class="text-sm"></div>
+</header>
+
+<main class="px-8 py-12">
+    <div class="mb-10">
+        <p class="gold-text uppercase tracking-[0.3em] text-sm mb-3">Account</p>
+        <h1 class="text-5xl font-serif">My Orders</h1>
+    </div>
+
+    <div id="ordersContainer" class="space-y-6"></div>
+</main>
+
+<script src="/js/api.js"></script>
+<script src="/js/products.js"></script>
+<script src="/js/orders.js"></script>
+<script>
+    requireOrderAuth();
+    renderAuthLinks();
+    loadMyOrders();
+</script>
+
+</body>
+</html>

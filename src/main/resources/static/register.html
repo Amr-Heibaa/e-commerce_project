@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Register | Perfume Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body class="luxury-bg min-h-screen flex items-center justify-center px-4">
+
+<div class="glass-card w-full max-w-md rounded-3xl p-8">
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-serif gold-text mb-2">Create Account</h1>
+        <p class="text-sm text-gray-300">Join the luxury fragrance experience</p>
+    </div>
+
+    <div id="errorBox" class="hidden mb-4 rounded-xl bg-red-500/20 border border-red-400/40 text-red-200 px-4 py-3 text-sm"></div>
+
+    <form onsubmit="register(event)" class="space-y-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+                <label class="block text-sm mb-2 text-gray-300">First Name</label>
+                <input name="firstName" type="text" required class="input-luxury w-full rounded-xl px-4 py-3" />
+            </div>
+
+            <div>
+                <label class="block text-sm mb-2 text-gray-300">Last Name</label>
+                <input name="lastName" type="text" required class="input-luxury w-full rounded-xl px-4 py-3" />
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-sm mb-2 text-gray-300">Email</label>
+            <input name="email" type="email" required class="input-luxury w-full rounded-xl px-4 py-3" />
+        </div>
+
+        <div>
+            <label class="block text-sm mb-2 text-gray-300">Password</label>
+            <input name="password" type="password" required class="input-luxury w-full rounded-xl px-4 py-3" />
+        </div>
+
+        <button class="gold-btn w-full rounded-xl py-3">
+            Register
+        </button>
+    </form>
+
+    <p class="text-center text-sm text-gray-400 mt-6">
+        Already have an account?
+        <a href="/login.html" class="gold-text hover:underline">Login</a>
+    </p>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+</body>
+</html>
