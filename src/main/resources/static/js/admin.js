@@ -837,4 +837,5 @@ function _errorState(message) {
         <p class="text-red-300 text-sm">Error: ${escapeHtml(message)}</p>
         <button onclick="location.reload()" class="text-xs text-gray-500 hover:text-gray-300 underline">Try reloading</button>
     </div>`;
+
 }
