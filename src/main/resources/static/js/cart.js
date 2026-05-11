@@ -214,4 +214,5 @@ async function placeOrder(event) {
         message.textContent = error.message;
         message.className = 'mb-6 rounded-xl px-4 py-3 text-sm bg-red-500/20 border border-red-400/40 text-red-200';
     }
+
 }
