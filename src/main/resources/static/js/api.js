@@ -33,9 +33,7 @@ const api = {
 
     isAdmin() {
         const user = this.getUser();
-        if (!user || !user.roles) return false;
-
-        return user.roles.includes('ROLE_ADMIN') || user.roles.includes('ADMIN');
+        return !!user?.roles?.some(role => role === 'ROLE_ADMIN' || role === 'ADMIN');
     },
 
     async request(endpoint, options = {}) {
@@ -55,19 +53,18 @@ const api = {
             headers
         });
 
+        const contentType = response.headers.get('content-type');
+        const data = contentType && contentType.includes('application/json')
+            ? await response.json()
+            : await response.text();
+
         if (response.status === 401 || response.status === 403) {
             this.logout();
             return;
         }
 
-        const contentType = response.headers.get('content-type');
-
-        const data = contentType && contentType.includes('application/json')
-            ? await response.json()
-            : await response.text();
-
         if (!response.ok) {
-            throw new Error(data.message || data.error || 'Request failed');
+            throw new Error(data?.message || data?.error || 'Request failed');
         }
 
         return data;
@@ -90,8 +87,8 @@ const api = {
             body: JSON.stringify(body)
         });
     },
-    
-    patch(endpoint, body) {
+
+    patch(endpoint, body = {}) {
         return this.request(endpoint, {
             method: 'PATCH',
             body: JSON.stringify(body)
@@ -103,5 +100,4 @@ const api = {
             method: 'DELETE'
         });
     }
-
 };

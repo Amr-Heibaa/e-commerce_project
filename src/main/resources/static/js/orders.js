@@ -1,130 +1,84 @@
-function requireOrderAuth() {
-    if (!api.isLoggedIn()) {
-        window.location.href = '/login.html';
-    }
-}
-
-function orderMoney(value) {
-    return `$${Number(value || 0).toFixed(2)}`;
-}
-
-function formatOrderDate(value) {
-    if (!value) return 'N/A';
-    return new Date(value).toLocaleDateString();
-}
-
-function getOrderItems(order) {
-    return order.items || order.orderItems || [];
-}
-
-function getOrderTotal(order) {
-    return order.totalAmount || order.total || order.grandTotal || 0;
-}
-
-function getOrderStatus(order) {
-    return order.status || order.orderStatus || 'PENDING';
-}
-
-function getPaymentStatus(order) {
-    return order.paymentStatus || order.payment?.status || 'PENDING';
-}
-
-async function loadMyOrders() {
-    const container = document.getElementById('ordersContainer');
-    if (!container) return;
+async function loadMyRefunds() {
+    const list = document.getElementById('refunds-list');
+    if (!list) return;
 
     try {
-        const response = await api.get('/orders/my-orders');
-        const orders = response.content || response;
+        const refunds = await api.get('/refunds/my');
 
-        if (!orders || orders.length === 0) {
-            container.innerHTML = `
-        <div class="glass-card rounded-3xl p-8 text-center">
-          <h2 class="text-2xl font-serif gold-text mb-3">No orders yet</h2>
-          <p class="text-gray-400 mb-6">Your fragrance journey starts here.</p>
-          <a href="/products.html" class="gold-btn inline-block rounded-xl px-8 py-3">Shop Perfumes</a>
-        </div>
-      `;
+        if (!refunds || refunds.length === 0) {
+            list.innerHTML = `
+                <div class="glass-card rounded-3xl p-8 text-center">
+                    <p class="text-gray-400">No refund requests yet.</p>
+                </div>
+            `;
             return;
         }
 
-        container.innerHTML = orders.map(orderCard).join('');
+        const statusColors = {
+            PENDING: 'bg-yellow-500/20 text-yellow-300',
+            APPROVED: 'bg-green-500/20 text-green-300',
+            REJECTED: 'bg-red-500/20 text-red-300'
+        };
+
+        list.innerHTML = refunds.map(refund => `
+            <div class="glass-card rounded-3xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="gold-text text-xs uppercase tracking-[0.25em] mb-1">
+                            Order #${refund.orderId}
+                        </p>
+                        <p class="text-gray-400 text-sm">
+                            ${formatOrderDate(refund.createdAt)}
+                        </p>
+                    </div>
+
+                    <span class="rounded-full px-4 py-2 text-sm ${statusColors[refund.status] || 'bg-gray-500/20 text-gray-300'}">
+                        ${refund.status}
+                    </span>
+                </div>
+
+                <p class="text-gray-300">${refund.reason}</p>
+
+                ${refund.resolvedAt ? `
+                    <p class="text-gray-400 text-sm mt-3">
+                        Resolved: ${formatOrderDate(refund.resolvedAt)}
+                    </p>
+                ` : ''}
+            </div>
+        `).join('');
+
     } catch (error) {
-        container.innerHTML = `<p class="text-red-300">${error.message}</p>`;
+        list.innerHTML = `<p class="text-red-300">${error.message}</p>`;
     }
 }
 
-function orderCard(order) {
-    const items = getOrderItems(order);
+async function submitRefund() {
+    const orderId = document.getElementById('refund-order-id').value.trim();
+    const reason = document.getElementById('refund-reason').value.trim();
 
-    return `
-    <div class="glass-card rounded-3xl p-6">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <div>
-          <p class="gold-text text-xs uppercase tracking-[0.25em] mb-2">
-            Order #${order.id}
-          </p>
-          <h2 class="text-2xl font-serif">
-            ${formatOrderDate(order.createdAt || order.orderDate)}
-          </h2>
-        </div>
+    if (!orderId || !reason) {
+        alert('Please fill all fields');
+        return;
+    }
 
-        <div class="flex flex-wrap gap-3 text-sm">
-          <span class="rounded-full border border-yellow-500/30 px-4 py-2 gold-text">
-            ${getOrderStatus(order)}
-          </span>
-          <span class="rounded-full border border-yellow-500/30 px-4 py-2 text-gray-300">
-            Payment: ${getPaymentStatus(order)}
-          </span>
-          <span class="rounded-full bg-yellow-500/15 px-4 py-2 gold-text font-semibold">
-            ${orderMoney(getOrderTotal(order))}
-          </span>
-        </div>
-      </div>
-
-      <div class="space-y-3">
-        ${items.length ? items.map(orderItemRow).join('') : `<p class="text-gray-400">No order items found.</p>`}
-      </div>
-
-      <div class="mt-6 flex gap-3">
-        <button onclick="requestRefund(${order.id})" class="outline-gold rounded-xl px-5 py-3">
-          Request Refund
-        </button>
-      </div>
-    </div>
-  `;
-}
-
-function orderItemRow(item) {
-    const name = item.productName || item.name || item.product?.name || 'Perfume';
-    const size = item.size || item.variantSize || item.productVariant?.size || '';
-    const quantity = item.quantity || 1;
-    const price = item.price || item.unitPrice || 0;
-
-    return `
-    <div class="flex justify-between items-center border-t border-yellow-500/10 pt-3">
-      <div>
-        <p class="text-white">${name}</p>
-        <p class="text-gray-400 text-sm">${size} × ${quantity}</p>
-      </div>
-
-      <p class="gold-text">${orderMoney(Number(price) * Number(quantity))}</p>
-    </div>
-  `;
-}
-
-async function requestRefund(orderId) {
-    const reason = prompt('Please enter the refund reason:');
-    if (!reason) return;
+    const btn = document.getElementById('submit-refund-btn');
+    btn.disabled = true;
 
     try {
         await api.post('/refunds', {
-            orderId,
+            orderId: Number(orderId),
             reason
         });
 
-        alert('Refund request submitted successfully.');
+        alert('Refund request submitted.');
+
+        document.getElementById('refund-order-id').value = '';
+        document.getElementById('refund-reason').value = '';
+
+        await loadMyRefunds();
     } catch (error) {
         alert(error.message);
     }
+
+    btn.disabled = false;
 }

@@ -180,21 +180,28 @@ async function placeOrder(event) {
     const form = event.target;
     const message = document.getElementById('checkoutMessage');
 
-    const payload = {
-        address: {
-            fullName: form.fullName.value.trim(),
-            phone: form.phone.value.trim(),
-            street: form.street.value.trim(),
-            city: form.city.value.trim(),
-            state: form.state.value.trim(),
-            postalCode: form.postalCode.value.trim(),
-            country: form.country.value.trim()
-        },
-        paymentMethod: form.paymentMethod.value
+    const addressPayload = {
+        fullName: form.fullName.value.trim(),
+        phone: form.phone.value.trim(),
+        addressLine1: form.addressLine1.value.trim(),
+        addressLine2: form.addressLine2.value.trim(),
+        city: form.city.value.trim(),
+        state: form.state.value.trim(),
+        postalCode: form.postalCode.value.trim(),
+        country: form.country.value.trim(),
+        isDefault: true
     };
 
     try {
-        await api.post('/orders/checkout', payload);
+        const savedAddress = await api.post('/addresses', addressPayload);
+
+        const checkoutPayload = {
+            addressId: savedAddress.id,
+            paymentMethod: form.paymentMethod.value,
+            notes: ""
+        };
+
+        await api.post('/orders/checkout', checkoutPayload);
 
         message.textContent = 'Order placed successfully.';
         message.className = 'mb-6 rounded-xl px-4 py-3 text-sm bg-green-500/20 border border-green-400/40 text-green-200';
@@ -202,6 +209,7 @@ async function placeOrder(event) {
         setTimeout(() => {
             window.location.href = '/my-orders.html';
         }, 900);
+
     } catch (error) {
         message.textContent = error.message;
         message.className = 'mb-6 rounded-xl px-4 py-3 text-sm bg-red-500/20 border border-red-400/40 text-red-200';

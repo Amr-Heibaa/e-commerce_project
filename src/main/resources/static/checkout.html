@@ -16,8 +16,7 @@
         <a href="/index.html" class="hover:text-yellow-400">Home</a>
         <a href="/products.html" class="hover:text-yellow-400">Products</a>
         <a href="/cart.html" class="hover:text-yellow-400">Cart</a>
-        <a href="/my-orders.html" class="gold-text">My Orders</a>
-
+        <a href="/my-orders.html" class="hover:text-yellow-400">My Orders</a>
     </nav>
 
     <div id="authLinks" class="text-sm"></div>
@@ -48,8 +47,13 @@
             </div>
 
             <div>
-                <label class="block text-sm mb-2 text-gray-300">Street Address</label>
-                <input name="street" required class="input-luxury w-full rounded-xl px-4 py-3" />
+                <label class="block text-sm mb-2 text-gray-300">Address Line 1</label>
+                <input name="addressLine1" required class="input-luxury w-full rounded-xl px-4 py-3" />
+            </div>
+
+            <div>
+                <label class="block text-sm mb-2 text-gray-300">Address Line 2</label>
+                <input name="addressLine2" class="input-luxury w-full rounded-xl px-4 py-3" />
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -60,7 +64,7 @@
 
                 <div>
                     <label class="block text-sm mb-2 text-gray-300">State</label>
-                    <input name="state" class="input-luxury w-full rounded-xl px-4 py-3" />
+                    <input name="state" required class="input-luxury w-full rounded-xl px-4 py-3" />
                 </div>
 
                 <div>
@@ -78,7 +82,7 @@
 
             <select name="paymentMethod" required class="input-luxury w-full rounded-xl px-4 py-3">
                 <option value="CASH_ON_DELIVERY">Cash On Delivery</option>
-                <option value="CARD">Card</option>
+                <option value="CREDIT_CARD">Credit Card</option>
             </select>
 
             <button class="gold-btn rounded-xl px-8 py-3 w-full">
@@ -100,6 +104,7 @@
     </div>
 </main>
 
+<!-- checkout.html -->
 <script src="/js/api.js"></script>
 <script src="/js/products.js"></script>
 <script src="/js/cart.js"></script>

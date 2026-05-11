@@ -27,16 +27,14 @@ async function login(event) {
         const response = await api.post('/auth/login', payload);
         api.setAuth(response);
 
-        if (api.isAdmin()) {
-            window.location.href = '/admin-dashboard.html';
-        } else {
-            window.location.href = '/index.html';
-        }
+        window.location.href = api.isAdmin()
+            ? '/admin-dashboard.html'
+            : '/index.html';
+
     } catch (error) {
         errorBox.textContent = error.message;
         errorBox.classList.remove('hidden');
     }
-
 }
 
 async function register(event) {
