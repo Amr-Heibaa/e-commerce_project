@@ -2,9 +2,11 @@ package com.example.ecommerence_project.dto.request;
 
 import com.example.ecommerence_project.enums.OrderStatus;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class OrderStatusUpdateRequest {
 
     @NotNull(message = "Status is required")
