@@ -36,6 +36,7 @@ async function login(event) {
         errorBox.textContent = error.message;
         errorBox.classList.remove('hidden');
     }
+
 }
 
 async function register(event) {
