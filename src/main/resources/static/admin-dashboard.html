@@ -2,76 +2,172 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard | Perfume Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .fade-up { animation: fadeUp .5s ease both; }
+        .fade-up-1 { animation-delay: .05s; }
+        .fade-up-2 { animation-delay: .12s; }
+        .fade-up-3 { animation-delay: .19s; }
+        .fade-up-4 { animation-delay: .26s; }
+        .fade-up-5 { animation-delay: .33s; }
+        .card-hover { transition: transform .2s ease, box-shadow .2s ease; }
+        .card-hover:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(202,138,4,.12); }
+    </style>
 </head>
 
 <body class="bg-black text-white">
 
-<header class="navbar px-8 py-4 flex justify-between items-center border-b border-yellow-500/20">
-    <a href="/index.html" class="text-2xl font-serif gold-text">Perfume Admin</a>
+<!-- ── Navbar ───────────────────────────────────────────── -->
+<header class="navbar px-8 py-4 flex justify-between items-center border-b border-yellow-500/20 sticky top-0 z-50 backdrop-blur-md bg-black/80">
+    <a href="/admin-dashboard.html" class="text-2xl font-serif gold-text tracking-wide">Perfume Admin</a>
 
-    <nav class="hidden md:flex gap-6 text-sm uppercase tracking-widest">
-        <a href="/admin-dashboard.html" class="gold-text">Dashboard</a>
-        <a href="/admin-categories.html" class="hover:text-yellow-400">Categories</a>
-        <a href="/admin-products.html" class="hover:text-yellow-400">Products</a>
-        <a href="/admin-orders.html" class="hover:text-yellow-400">Orders</a>
-        <a href="/admin-users.html" class="hover:text-yellow-400">Users</a>
-        <a href="/admin-refunds.html" class="hover:text-yellow-400">Refunds</a>
+    <nav class="hidden md:flex gap-6 text-xs uppercase tracking-widest">
+        <a href="/admin-dashboard.html" class="gold-text border-b border-yellow-500 pb-0.5">Dashboard</a>
+        <a href="/admin-categories.html" class="hover:text-yellow-400 transition-colors">Categories</a>
+        <a href="/admin-products.html"   class="hover:text-yellow-400 transition-colors">Products</a>
+        <a href="/admin-orders.html"     class="hover:text-yellow-400 transition-colors">Orders</a>
+        <a href="/admin-users.html"      class="hover:text-yellow-400 transition-colors">Users</a>
+        <a href="/admin-refunds.html"    class="hover:text-yellow-400 transition-colors">Refunds</a>
     </nav>
 
-    <button onclick="api.logout()" class="gold-text text-sm">Logout</button>
+    <div class="flex items-center gap-4">
+        <a href="/index.html" class="hidden md:block text-xs text-gray-500 hover:text-gray-300 transition-colors uppercase tracking-widest">
+            ← Store
+        </a>
+        <button onclick="api.logout()" class="gold-text text-xs uppercase tracking-widest hover:opacity-70 transition-opacity">
+            Logout
+        </button>
+    </div>
 </header>
 
-<main class="px-8 py-12">
-    <div class="mb-10">
-        <p class="gold-text uppercase tracking-[0.3em] text-sm mb-3">Control Center</p>
-        <h1 class="text-5xl font-serif">Admin Dashboard</h1>
+<main class="px-6 md:px-10 py-12 max-w-screen-xl mx-auto">
+
+    <!-- ── Page Header ───────────────────────────────────── -->
+    <div class="mb-12 fade-up">
+        <p class="gold-text uppercase tracking-[0.35em] text-xs mb-3">Control Center</p>
+        <h1 class="text-5xl font-serif leading-tight">Admin Dashboard</h1>
+        <p class="text-gray-500 text-sm mt-2" id="dashboardGreeting"></p>
     </div>
 
-    <section id="dashboardCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        <div class="glass-card rounded-3xl p-6">
-            <p class="text-gray-400 text-sm mb-2">Products</p>
-            <h2 id="productCount" class="text-4xl font-serif gold-text">0</h2>
+    <!-- ── KPI Cards ─────────────────────────────────────── -->
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-12">
+        <!-- Products -->
+        <div class="glass-card rounded-3xl p-6 card-hover cursor-default fade-up fade-up-1" onclick="location.href='/admin-products.html'">
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+                     style="background:rgba(202,138,4,.12);border:1px solid rgba(202,138,4,.2);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:#ca8a04;">
+                        <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
+                </div>
+                <span class="text-xs text-gray-500 uppercase tracking-widest">Products</span>
+            </div>
+            <h2 id="productCount" class="text-4xl font-serif gold-text">—</h2>
+            <p class="text-gray-600 text-xs mt-1">total items</p>
         </div>
 
-        <div class="glass-card rounded-3xl p-6">
-            <p class="text-gray-400 text-sm mb-2">Categories</p>
-            <h2 id="categoryCount" class="text-4xl font-serif gold-text">0</h2>
+        <!-- Categories -->
+        <div class="glass-card rounded-3xl p-6 card-hover cursor-default fade-up fade-up-2" onclick="location.href='/admin-categories.html'">
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+                     style="background:rgba(202,138,4,.12);border:1px solid rgba(202,138,4,.2);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:#ca8a04;">
+                        <path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/>
+                    </svg>
+                </div>
+                <span class="text-xs text-gray-500 uppercase tracking-widest">Categories</span>
+            </div>
+            <h2 id="categoryCount" class="text-4xl font-serif gold-text">—</h2>
+            <p class="text-gray-600 text-xs mt-1">collections</p>
         </div>
 
-        <div class="glass-card rounded-3xl p-6">
-            <p class="text-gray-400 text-sm mb-2">Orders</p>
-            <h2 id="orderCount" class="text-4xl font-serif gold-text">0</h2>
+        <!-- Orders -->
+        <div class="glass-card rounded-3xl p-6 card-hover cursor-default fade-up fade-up-3" onclick="location.href='/admin-orders.html'">
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+                     style="background:rgba(202,138,4,.12);border:1px solid rgba(202,138,4,.2);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:#ca8a04;">
+                        <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                    </svg>
+                </div>
+                <span class="text-xs text-gray-500 uppercase tracking-widest">Orders</span>
+            </div>
+            <h2 id="orderCount" class="text-4xl font-serif gold-text">—</h2>
+            <p class="text-gray-600 text-xs mt-1">all time</p>
         </div>
 
-        <div class="glass-card rounded-3xl p-6">
-            <p class="text-gray-400 text-sm mb-2">Refunds</p>
-            <h2 id="refundCount" class="text-4xl font-serif gold-text">0</h2>
+        <!-- Refunds -->
+        <div class="glass-card rounded-3xl p-6 card-hover cursor-default fade-up fade-up-4" onclick="location.href='/admin-refunds.html'">
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+                     style="background:rgba(202,138,4,.12);border:1px solid rgba(202,138,4,.2);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:#ca8a04;">
+                        <path d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                    </svg>
+                </div>
+                <span class="text-xs text-gray-500 uppercase tracking-widest">Refunds</span>
+            </div>
+            <h2 id="refundCount" class="text-4xl font-serif gold-text">—</h2>
+            <p class="text-gray-600 text-xs mt-1">requests</p>
         </div>
     </section>
 
-    <section class="glass-card rounded-3xl p-6">
+    <!-- ── Quick Actions ──────────────────────────────────── -->
+    <section class="glass-card rounded-3xl p-8 fade-up fade-up-5">
         <h2 class="text-2xl font-serif gold-text mb-6">Quick Actions</h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <a href="/admin-categories.html" class="outline-gold rounded-xl px-5 py-4 text-center">Manage Categories</a>
-            <a href="/admin-products.html" class="outline-gold rounded-xl px-5 py-4 text-center">Manage Products</a>
-            <a href="/admin-orders.html" class="outline-gold rounded-xl px-5 py-4 text-center">Manage Orders</a>
-            <a href="/admin-users.html" class="outline-gold rounded-xl px-5 py-4 text-center">Manage Users</a>
-            <a href="/admin-refunds.html" class="outline-gold rounded-xl px-5 py-4 text-center">Manage Refunds</a>
-            <a href="/index.html" class="outline-gold rounded-xl px-5 py-4 text-center">View Store</a>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <a href="/admin-categories.html"
+               class="group outline-gold rounded-2xl px-5 py-5 text-center hover:bg-yellow-500/5 transition-all">
+                <div class="text-2xl mb-2">🏷️</div>
+                <span class="text-sm">Manage Categories</span>
+            </a>
+            <a href="/admin-products.html"
+               class="group outline-gold rounded-2xl px-5 py-5 text-center hover:bg-yellow-500/5 transition-all">
+                <div class="text-2xl mb-2">🧴</div>
+                <span class="text-sm">Manage Products</span>
+            </a>
+            <a href="/admin-orders.html"
+               class="group outline-gold rounded-2xl px-5 py-5 text-center hover:bg-yellow-500/5 transition-all">
+                <div class="text-2xl mb-2">📦</div>
+                <span class="text-sm">Manage Orders</span>
+            </a>
+            <a href="/admin-users.html"
+               class="group outline-gold rounded-2xl px-5 py-5 text-center hover:bg-yellow-500/5 transition-all">
+                <div class="text-2xl mb-2">👤</div>
+                <span class="text-sm">Manage Users</span>
+            </a>
+            <a href="/admin-refunds.html"
+               class="group outline-gold rounded-2xl px-5 py-5 text-center hover:bg-yellow-500/5 transition-all">
+                <div class="text-2xl mb-2">↩️</div>
+                <span class="text-sm">Manage Refunds</span>
+            </a>
+            <a href="/index.html"
+               class="group outline-gold rounded-2xl px-5 py-5 text-center hover:bg-yellow-500/5 transition-all">
+                <div class="text-2xl mb-2">🏪</div>
+                <span class="text-sm">View Store</span>
+            </a>
         </div>
     </section>
+
 </main>
 
-<!-- admin-dashboard.html -->
 <script src="/js/api.js"></script>
 <script src="/js/admin.js"></script>
 <script>
     requireAdminPage();
     loadAdminDashboard();
+
+    // Greeting
+    const hour = new Date().getHours();
+    const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    document.getElementById('dashboardGreeting').textContent = `${greet} — here's your store overview.`;
 </script>
 
 </body>

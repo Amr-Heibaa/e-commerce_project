@@ -86,9 +86,9 @@ function cartItemTemplate(item) {
 
     return `
     <div class="glass-card rounded-3xl p-5 flex flex-col md:flex-row gap-5">
-      <img 
-        src="${getItemImage(item)}" 
-        alt="${getItemName(item)}" 
+      <img
+        src="${getItemImage(item)}"
+        alt="${getItemName(item)}"
         class="w-full md:w-36 h-40 object-cover rounded-2xl"
       />
 
