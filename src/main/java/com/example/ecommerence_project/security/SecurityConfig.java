@@ -26,16 +26,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final UserRepository userRepository;
 
     // @Lazy breaks the circular dependency
     public SecurityConfig(@Lazy JwtAuthenticationFilter jwtAuthFilter,
+                          JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
                           UserRepository userRepository) {
-        this.jwtAuthFilter  = jwtAuthFilter;
-        this.userRepository = userRepository;
+        this.jwtAuthFilter               = jwtAuthFilter;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.userRepository              = userRepository;
     }
 
-    // NOTE for Dev 2: inject JwtAuthenticationEntryPoint here when ready
     // NOTE for Dev 3: inject JwtAccessDeniedHandler here when ready
 
     @Bean
@@ -54,6 +56,9 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(ex ->
+                        ex.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/auth/**",
