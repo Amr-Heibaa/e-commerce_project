@@ -1,5 +1,3 @@
-/* refunds.js — Developer 4 */
-
 async function loadMyRefunds() {
     const list = document.getElementById('refunds-list');
     if (!list) return;
@@ -13,7 +11,7 @@ async function loadMyRefunds() {
             return;
         }
         const statusColors = {
-            PENDING:  'bg-yellow-500/20 text-yellow-300',
+            PENDING: 'bg-yellow-500/20 text-yellow-300',
             APPROVED: 'bg-green-500/20 text-green-300',
             REJECTED: 'bg-red-500/20 text-red-300',
         };
@@ -32,14 +30,14 @@ async function loadMyRefunds() {
                 ${r.resolvedAt ? `<p class="text-gray-400 text-sm mt-3">Resolved: ${formatOrderDate(r.resolvedAt)}</p>` : ''}
             </div>
         `).join('');
-    } catch(e) {
+    } catch (e) {
         list.innerHTML = `<p class="text-red-300">${e.message}</p>`;
     }
 }
 
 async function submitRefund() {
     const orderId = document.getElementById('refund-order-id').value.trim();
-    const reason  = document.getElementById('refund-reason').value.trim();
+    const reason = document.getElementById('refund-reason').value.trim();
     if (!orderId || !reason) { alert('Please fill all fields'); return; }
     const btn = document.getElementById('submit-refund-btn');
     btn.disabled = true;
@@ -49,6 +47,6 @@ async function submitRefund() {
         document.getElementById('refund-order-id').value = '';
         document.getElementById('refund-reason').value = '';
         loadMyRefunds();
-    } catch(e) { alert(e.message); }
+    } catch (e) { alert(e.message); }
     btn.disabled = false;
 }

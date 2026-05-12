@@ -64,16 +64,17 @@ public class SecurityConfig {
                                 "/api/auth/**",
                                 "/api/products/**",
                                 "/api/categories/**",
+                                "/components/**",
                                 "/api/reviews/product/**"
                         ).permitAll()
                         .requestMatchers(
                                 "/", "/index.html", "/login.html", "/register.html",
-                                "/products.html", "/product-details.html",
-                                "/admin-dashboard.html", "/admin-users.html",
+                                "/products.html", "/product-details.html","/about.html",
+                                "/contact.html", "/admin-dashboard.html", "/admin-users.html",
                                 "/admin-refunds.html", "/admin-categories.html",
                                 "/admin-products.html", "/admin-orders.html",
                                 "/cart.html", "/checkout.html", "/my-orders.html",
-                                "/js/**", "/css/**"
+                                "/js/**", "/css/**","/components/**"
                         ).permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers(

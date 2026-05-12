@@ -12,7 +12,6 @@ const api = {
 
     setAuth(authResponse) {
         localStorage.setItem('accessToken', authResponse.accessToken);
-
         localStorage.setItem('user', JSON.stringify({
             userId: authResponse.userId,
             email: authResponse.email,
@@ -38,35 +37,28 @@ const api = {
 
     async request(endpoint, options = {}) {
         const token = this.getToken();
-
         const headers = {
             'Content-Type': 'application/json',
             ...(options.headers || {})
         };
-
         if (token) {
             headers.Authorization = `Bearer ${token}`;
         }
-
         const response = await fetch(`${API_BASE}${endpoint}`, {
             ...options,
             headers
         });
-
         const contentType = response.headers.get('content-type');
         const data = contentType && contentType.includes('application/json')
             ? await response.json()
             : await response.text();
-
         if (response.status === 401 || response.status === 403) {
             this.logout();
             return;
         }
-
         if (!response.ok) {
             throw new Error(data?.message || data?.error || 'Request failed');
         }
-
         return data;
     },
 

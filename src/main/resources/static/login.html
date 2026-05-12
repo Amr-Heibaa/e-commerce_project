@@ -5,43 +5,35 @@
     <title>Login | Perfume Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        /* Minimal: no sidebar on login, but you could add one if desired.
+           I'll keep the header with logo only, no sidebar. */
+        .navbar { border-bottom: 1px solid rgba(245, 200, 66, 0.2); }
+    </style>
 </head>
-
 <body class="luxury-bg min-h-screen flex items-center justify-center px-4">
-
 <div class="glass-card w-full max-w-md rounded-3xl p-8">
     <div class="text-center mb-8">
         <h1 class="text-4xl font-serif gold-text mb-2">Perfume Store</h1>
         <p class="text-sm text-gray-300">Enter your private fragrance world</p>
     </div>
-
     <div id="errorBox" class="hidden mb-4 rounded-xl bg-red-500/20 border border-red-400/40 text-red-200 px-4 py-3 text-sm"></div>
-
     <form onsubmit="login(event)" class="space-y-5">
         <div>
             <label class="block text-sm mb-2 text-gray-300">Email</label>
             <input name="email" type="email" required class="input-luxury w-full rounded-xl px-4 py-3" />
         </div>
-
         <div>
             <label class="block text-sm mb-2 text-gray-300">Password</label>
             <input name="password" type="password" required class="input-luxury w-full rounded-xl px-4 py-3" />
         </div>
-
-        <button class="gold-btn w-full rounded-xl py-3">
-            Login
-        </button>
+        <button class="gold-btn w-full rounded-xl py-3">Login</button>
     </form>
-
     <p class="text-center text-sm text-gray-400 mt-6">
-        New customer?
-        <a href="/register.html" class="gold-text hover:underline">Create account</a>
+        New customer? <a href="/register.html" class="gold-text hover:underline">Create account</a>
     </p>
 </div>
-
-<!-- login.html -->
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
 </body>
-
 </html>

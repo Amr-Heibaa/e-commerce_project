@@ -1,0 +1,76 @@
+<!-- navbar.html – Sidebar, cart drawer, top navbar -->
+
+<!-- Side Menu Overlay -->
+<div id="sideMenuOverlay"></div>
+
+<!-- Side Menu -->
+<div id="sideMenu">
+    <div class="side-header">
+        <a href="/index.html" class="side-logo">Perfume Store</a>
+        <button onclick="closeSideMenu()" class="side-close">✕</button>
+    </div>
+    <nav class="side-nav">
+        <a href="/products.html?category=new" class="side-link">New In</a>
+        <a href="/products.html" class="side-link">Fragrance</a>
+        <a href="/products.html?category=gifts" class="side-link">Gifts</a>
+        <a href="/about.html" class="side-link">The Art Of Gifting</a>
+        <a href="/about.html" class="side-link">Our Commitments</a>
+        <div class="side-divider"></div>
+        <a href="/contact.html" class="side-link">Contact Us</a>
+        <a href="#" class="side-link">Find a Boutique</a>
+        <a href="#" class="side-link"><span>Accessibility: Better Contrast</span><span>◐</span></a>
+    </nav>
+    <div class="side-footer">
+        <div id="sideMenuAuth"></div>
+        <p class="side-copy">Fragrance & Beauty</p>
+        <p class="side-year">© 2026 Perfume Store</p>
+    </div>
+</div>
+
+<!-- Cart Drawer Overlay -->
+<div id="cartDrawerOverlay"></div>
+
+<!-- Cart Drawer -->
+<div id="cartDrawer">
+    <div id="cartDrawerSuccess" class="cart-success">
+        <span>✓</span><span>Added to cart</span>
+    </div>
+    <div class="cart-header">
+        <h2>Shopping Bag</h2>
+        <button onclick="closeCartDrawer()" class="cart-close">✕</button>
+    </div>
+    <div id="cartDrawerBody" class="cart-body"></div>
+    <div id="cartDrawerFooter" class="cart-footer" style="display:none">
+        <div class="cart-total-row">
+            <span>Total</span>
+            <span id="cartDrawerTotal">$0.00</span>
+        </div>
+        <a href="/cart.html" onclick="closeCartDrawer()" class="btn-cart-checkout">Go to My Cart</a>
+        <button onclick="closeCartDrawer()" class="btn-cart-continue">Continue Shopping</button>
+    </div>
+</div>
+
+<!-- Top Navbar -->
+<header class="site-navbar">
+    <button class="hamburger-btn" onclick="openSideMenu()">
+        <span></span><span></span><span></span>
+    </button>
+    <a href="/index.html" class="brand">Perfume Store</a>
+    <nav class="desktop-nav" id="desktopNav">
+        <a href="/index.html" class="nav-link">Home</a>
+        <a href="/products.html" class="nav-link">Products</a>
+        <a href="/about.html" class="nav-link">About Us</a>
+        <a href="/contact.html" class="nav-link">Contact Us</a>
+    </nav>
+    <div class="nav-right">
+        <button class="cart-icon-btn" onclick="openCartDrawer()">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <path d="M16 10a4 4 0 01-8 0"/>
+            </svg>
+            <span id="cartBadge"></span>
+        </button>
+        <div id="navAuthLinks" class="auth-links"></div>
+    </div>
+</header>

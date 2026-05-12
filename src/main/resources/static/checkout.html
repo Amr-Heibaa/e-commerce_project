@@ -2,117 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Checkout | Perfume Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        @keyframes fadeUp { from { opacity:0;transform:translateY(16px); } to { opacity:1;transform:translateY(0); } }
+        .fade-up { animation: fadeUp .5s ease both; }
+        .checkout-label { display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.18em;color:#6b7280;margin-bottom:8px; }
+        .checkout-input { width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(202,138,4,.2);border-radius:12px;padding:13px 16px;color:#fff;font-size:.9rem;outline:none;transition:border-color .2s; }
+        .checkout-input:focus { border-color:rgba(202,138,4,.55); }
+        .checkout-input::placeholder { color:#374151; }
+        .checkout-input option { background:#111; }
+        .step-indicator { display:flex;align-items:center;gap:0;margin-bottom:36px; }
+        .step { display:flex;flex-direction:column;align-items:center;gap:6px;flex:1; }
+        .step-circle { width:32px;height:32px;border-radius:50%;border:1px solid rgba(202,138,4,.4);display:flex;align-items:center;justify-content:center;font-size:.75rem;color:#ca8a04; }
+        .step-circle.active { background:rgba(202,138,4,.2); }
+        .step-line { height:1px;flex:1;background:rgba(202,138,4,.2);margin-top:-22px; }
+        .step-label { font-size:.65rem;text-transform:uppercase;letter-spacing:.15em;color:#6b7280; }
+    </style>
 </head>
-
 <body class="bg-black text-white">
 
-<header class="navbar px-8 py-4 flex justify-between items-center border-b border-yellow-500/20">
-    <a href="/index.html" class="text-2xl font-serif gold-text">Perfume Store</a>
-
-    <nav class="hidden md:flex gap-8 text-sm uppercase tracking-widest">
-        <a href="/index.html" class="hover:text-yellow-400">Home</a>
-        <a href="/products.html" class="hover:text-yellow-400">Products</a>
-        <a href="/cart.html" class="hover:text-yellow-400">Cart</a>
-        <a href="/my-orders.html" class="hover:text-yellow-400">My Orders</a>
-    </nav>
-
-    <div id="authLinks" class="text-sm"></div>
-</header>
-
-<main class="px-8 py-12">
-    <div class="mb-10">
-        <p class="gold-text uppercase tracking-[0.3em] text-sm mb-3">Secure Checkout</p>
-        <h1 class="text-5xl font-serif">Complete Your Order</h1>
+<main class="px-6 md:px-12 py-14 max-w-screen-xl mx-auto">
+    <div class="mb-10 fade-up"><p class="gold-text uppercase tracking-[0.35em] text-xs mb-3">Secure Checkout</p><h1 class="text-5xl font-serif">Complete Your Order</h1></div>
+    <div class="step-indicator max-w-sm mb-10 fade-up">
+        <div class="step"><div class="step-circle active">1</div><span class="step-label">Shipping</span></div>
+        <div class="step-line"></div>
+        <div class="step"><div class="step-circle">2</div><span class="step-label">Payment</span></div>
+        <div class="step-line"></div>
+        <div class="step"><div class="step-circle">3</div><span class="step-label">Confirm</span></div>
     </div>
-
     <div id="checkoutMessage" class="hidden mb-6 rounded-xl px-4 py-3 text-sm"></div>
-
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <form onsubmit="placeOrder(event)" class="lg:col-span-2 glass-card rounded-3xl p-6 space-y-5">
-            <h2 class="text-2xl font-serif gold-text mb-4">Shipping Address</h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div>
-                    <label class="block text-sm mb-2 text-gray-300">Full Name</label>
-                    <input name="fullName" required class="input-luxury w-full rounded-xl px-4 py-3" />
-                </div>
-
-                <div>
-                    <label class="block text-sm mb-2 text-gray-300">Phone</label>
-                    <input name="phone" required class="input-luxury w-full rounded-xl px-4 py-3" />
-                </div>
+        <form onsubmit="placeOrder(event)" class="lg:col-span-2 space-y-6 fade-up">
+            <div class="glass-card rounded-3xl p-7"><h2 class="text-xl font-serif gold-text mb-6">Shipping Address</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5"><div><label class="checkout-label">Full Name *</label><input name="fullName" required class="checkout-input" placeholder="John Doe"/></div><div><label class="checkout-label">Phone *</label><input name="phone" required class="checkout-input" placeholder="+20 100 000 0000"/></div></div>
+                <div class="mb-5"><label class="checkout-label">Address Line 1 *</label><input name="addressLine1" required class="checkout-input" placeholder="Street address"/></div>
+                <div class="mb-5"><label class="checkout-label">Address Line 2</label><input name="addressLine2" class="checkout-input" placeholder="Apartment, suite, etc. (optional)"/></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5"><div><label class="checkout-label">City *</label><input name="city" required class="checkout-input" placeholder="Cairo"/></div><div><label class="checkout-label">State</label><input name="state" class="checkout-input" placeholder="State / Province"/></div><div><label class="checkout-label">Postal Code *</label><input name="postalCode" required class="checkout-input" placeholder="12345"/></div></div>
+                <div><label class="checkout-label">Country *</label><input name="country" value="Egypt" required class="checkout-input"/></div>
             </div>
-
-            <div>
-                <label class="block text-sm mb-2 text-gray-300">Address Line 1</label>
-                <input name="addressLine1" required class="input-luxury w-full rounded-xl px-4 py-3" />
-            </div>
-
-            <div>
-                <label class="block text-sm mb-2 text-gray-300">Address Line 2</label>
-                <input name="addressLine2" class="input-luxury w-full rounded-xl px-4 py-3" />
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                <div>
-                    <label class="block text-sm mb-2 text-gray-300">City</label>
-                    <input name="city" required class="input-luxury w-full rounded-xl px-4 py-3" />
-                </div>
-
-                <div>
-                    <label class="block text-sm mb-2 text-gray-300">State</label>
-                    <input name="state" required class="input-luxury w-full rounded-xl px-4 py-3" />
-                </div>
-
-                <div>
-                    <label class="block text-sm mb-2 text-gray-300">Postal Code</label>
-                    <input name="postalCode" required class="input-luxury w-full rounded-xl px-4 py-3" />
+            <div class="glass-card rounded-3xl p-7"><h2 class="text-xl font-serif gold-text mb-6">Payment Method</h2>
+                <div class="space-y-3">
+                    <label style="display:flex;align-items:center;gap:14px;border:1px solid rgba(202,138,4,.2);border-radius:14px;padding:16px 18px;cursor:pointer;"><input type="radio" name="paymentMethod" value="CASH_ON_DELIVERY" checked class="accent-yellow-500"/><div><p class="font-medium text-sm">Cash on Delivery</p><p class="text-gray-500 text-xs">Pay when your order arrives</p></div><span>💵</span></label>
+                    <label style="display:flex;align-items:center;gap:14px;border:1px solid rgba(202,138,4,.2);border-radius:14px;padding:16px 18px;cursor:pointer;"><input type="radio" name="paymentMethod" value="CREDIT_CARD" class="accent-yellow-500"/><div><p class="font-medium text-sm">Credit Card</p><p class="text-gray-500 text-xs">Visa, Mastercard, Amex</p></div><span>💳</span></label>
                 </div>
             </div>
-
-            <div>
-                <label class="block text-sm mb-2 text-gray-300">Country</label>
-                <input name="country" value="Egypt" required class="input-luxury w-full rounded-xl px-4 py-3" />
-            </div>
-
-            <h2 class="text-2xl font-serif gold-text pt-6 mb-4">Payment</h2>
-
-            <select name="paymentMethod" required class="input-luxury w-full rounded-xl px-4 py-3">
-                <option value="CASH_ON_DELIVERY">Cash On Delivery</option>
-                <option value="CREDIT_CARD">Credit Card</option>
-            </select>
-
-            <button class="gold-btn rounded-xl px-8 py-3 w-full">
-                Place Order
-            </button>
+            <button type="submit" class="gold-btn w-full rounded-2xl py-4 font-medium" style="font-size:.85rem;letter-spacing:.15em;">Place Order</button>
         </form>
-
-        <aside class="glass-card rounded-3xl p-6 h-fit">
-            <h2 class="text-2xl font-serif gold-text mb-6">Cart Summary</h2>
-            <div id="checkoutSummary" class="space-y-4"></div>
-
-            <div class="border-t border-yellow-500/20 my-5"></div>
-
-            <div class="flex justify-between text-xl font-semibold">
-                <span>Total</span>
-                <span class="gold-text" id="checkoutTotal">$0.00</span>
-            </div>
-        </aside>
+        <aside class="glass-card rounded-3xl p-7 h-fit sticky top-24 fade-up"><h2 class="text-xl font-serif gold-text mb-6">Order Summary</h2><div id="checkoutSummary" class="space-y-4 mb-6"></div><div style="height:1px;background:rgba(202,138,4,.15);margin-bottom:16px;"></div><div class="flex justify-between items-center"><span class="text-gray-400 text-sm">Total</span><span class="text-2xl font-serif gold-text" id="checkoutTotal">$0.00</span></div></aside>
     </div>
 </main>
 
-<!-- checkout.html -->
 <script src="/js/api.js"></script>
+<script src="/js/load-common.js"></script>
 <script src="/js/products.js"></script>
 <script src="/js/cart.js"></script>
 <script>
     requireCartAuth();
-    renderAuthLinks();
     loadCheckoutSummary();
 </script>
-
 </body>
 </html>

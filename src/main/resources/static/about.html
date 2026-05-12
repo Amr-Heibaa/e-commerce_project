@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Us | Perfume Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+        .fade-up{animation:fadeUp .6s ease both}
+        .fade-up-1{animation-delay:.1s}
+        .fade-up-2{animation-delay:.22s}
+        .gold-line{width:60px;height:1px;background:linear-gradient(90deg,#ca8a04,transparent);margin-bottom:20px}
+        .about-2col{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+        @media(max-width:768px){.about-2col{grid-template-columns:1fr;gap:40px}}
+    </style>
+</head>
+<body class="bg-black text-white">
+
+<section class="luxury-bg px-8 md:px-16 py-36 flex items-center min-h-[60vh]"><div class="max-w-3xl"><div class="gold-line fade-up fade-up-1"></div><p class="gold-text uppercase tracking-[0.45em] text-xs mb-4 fade-up fade-up-1">Our Story</p><h1 class="text-5xl md:text-7xl font-serif leading-tight mb-6 fade-up fade-up-2">About<br/><span class="gold-text">Perfume Store</span></h1><p class="text-gray-400 text-lg max-w-xl leading-relaxed fade-up fade-up-2">A passion for rare ingredients, timeless craftsmanship, and scents that become part of who you are.</p></div></section>
+
+<section class="px-8 md:px-16 py-24 max-w-screen-xl mx-auto"><div class="about-2col"><div><div class="gold-line"></div><p class="gold-text uppercase tracking-[0.35em] text-xs mb-4">Who We Are</p><h2 class="text-4xl font-serif mb-8 leading-snug">Crafting Moments<br/>of Pure Luxury</h2><p class="text-gray-400 leading-8 mb-6">Since our founding…</p><p class="text-gray-400 leading-8">Each bottle is a small work of art…</p></div><div style="position:relative;"><div style="width:100%;aspect-ratio:4/5;background:rgba(202,138,4,.05);border:1px solid rgba(202,138,4,.15);border-radius:28px;display:flex;align-items:center;justify-content:center;font-size:6rem;color:rgba(202,138,4,.15)">🏺</div><div style="position:absolute;top:-16px;left:-16px;width:80px;height:80px;background:rgba(202,138,4,.06);border:1px solid rgba(202,138,4,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.8rem">🌹</div><div style="position:absolute;bottom:-16px;right:-16px;width:80px;height:80px;background:rgba(202,138,4,.06);border:1px solid rgba(202,138,4,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.8rem">✨</div></div></div></section>
+
+<script src="/js/api.js"></script>
+<script src="/js/load-common.js"></script>
+<script src="/js/products.js"></script>
+</body>
+</html>

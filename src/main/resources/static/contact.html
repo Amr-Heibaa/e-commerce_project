@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Us | Perfume Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+        .fade-up{animation:fadeUp .6s ease both}
+        .fade-up-1{animation-delay:.1s}
+        .fade-up-2{animation-delay:.22s}
+        .contact-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(202,138,4,.2);border-radius:12px;padding:14px 18px;color:#fff;font-size:.9rem;transition:border-color .2s;outline:none}
+        .contact-input:focus{border-color:rgba(202,138,4,.6)}
+        .contact-input::placeholder{color:#4b5563}
+        .contact-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:64px}
+        @media(max-width:768px){.contact-grid{grid-template-columns:1fr;gap:40px}}
+    </style>
+</head>
+<body class="bg-black text-white">
+
+<section class="luxury-bg px-8 md:px-16 py-32 flex items-center min-h-[50vh]"><div class="max-w-2xl"><div class="gold-line fade-up fade-up-1"></div><p class="gold-text uppercase tracking-[0.45em] text-xs mb-4 fade-up fade-up-1">We're Here</p><h1 class="text-5xl md:text-6xl font-serif leading-tight mb-5 fade-up fade-up-2">Contact<br/><span class="gold-text">Us</span></h1><p class="text-gray-400 text-lg leading-relaxed fade-up fade-up-2">Whether it's a fragrance question…</p></div></section>
+
+<section class="px-8 md:px-16 py-24 max-w-screen-xl mx-auto"><div class="contact-grid"><div><div class="gold-line"></div><h2 class="text-3xl font-serif mb-6">We'd Love<br/>to Hear From You</h2><p class="text-gray-400 leading-8 mb-10">Our team is on hand…</p><div class="space-y-4"><!-- contact info blocks --></div></div><div style="background:rgba(255,255,255,.02);border:1px solid rgba(202,138,4,.15);border-radius:24px;padding:44px"><h3 style="font-family:serif;font-size:1.5rem;margin-bottom:8px;color:#ca8a04">Send a Message</h3><form onsubmit="handleContactSubmit(event)" class="space-y-4"><input class="contact-input" type="text" placeholder="Full Name" required/><input class="contact-input" type="email" placeholder="Email" required/><textarea class="contact-input" rows="5" placeholder="Message…" required></textarea><button type="submit" class="gold-btn rounded-xl py-4 w-full">Send Message</button></form><p id="contactSuccess" style="display:none;color:#86efac;margin-top:12px">✓ Sent!</p></div></div></section>
+
+<script src="/js/api.js"></script>
+<script src="/js/load-common.js"></script>
+<script src="/js/products.js"></script>
+<script>
+    function handleContactSubmit(e){e.preventDefault();const s=document.getElementById('contactSuccess');s.style.display='block';e.target.reset();setTimeout(()=>s.style.display='none',5000);}
+</script>
+</body>
+</html>

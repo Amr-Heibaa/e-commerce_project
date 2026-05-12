@@ -2,60 +2,185 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Perfume Store</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perfume Store | Luxury Fragrances</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css" />
-</head>
+    <style>
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(22px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .fade-up   { animation: fadeUp .7s ease both; }
+        .fade-up-1 { animation-delay: .1s; }
+        .fade-up-2 { animation-delay: .22s; }
+        .fade-up-3 { animation-delay: .34s; }
 
+        .hero-section {
+            min-height: 100vh; display: flex; align-items: center;
+            position: relative; overflow: hidden;
+        }
+        .hero-section::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 60% 50%, rgba(202,138,4,.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .gold-line {
+            width: 60px; height: 1px;
+            background: linear-gradient(90deg, #ca8a04, transparent);
+            margin-bottom: 20px;
+        }
+        .about-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 64px; align-items: center;
+        }
+        @media (max-width: 768px) {
+            .about-grid { grid-template-columns: 1fr; gap: 40px; }
+        }
+        .contact-input {
+            width: 100%; background: rgba(255,255,255,.04);
+            border: 1px solid rgba(202,138,4,.2); border-radius: 12px;
+            padding: 14px 18px; color: #fff; font-size: .9rem;
+            transition: border-color .2s; outline: none;
+        }
+        .contact-input:focus { border-color: rgba(202,138,4,.6); }
+        .contact-input::placeholder { color: #4b5563; }
+        section { scroll-margin-top: 80px; }
+        .value-card {
+            border: 1px solid rgba(202,138,4,.12); border-radius: 20px;
+            padding: 32px 24px; text-align: center; transition: border-color .2s, background .2s;
+        }
+        .value-card:hover { border-color: rgba(202,138,4,.35); background: rgba(202,138,4,.04); }
+    </style>
+</head>
 <body class="bg-black text-white">
 
-<header class="navbar fixed top-0 left-0 w-full z-50 px-8 py-4 flex justify-between items-center">
-    <a href="/index.html" class="text-2xl font-serif gold-text">Perfume Store</a>
-
-    <nav class="hidden md:flex gap-8 text-sm uppercase tracking-widest">
-        <a href="/index.html" class="gold-text">Home</a>
-        <a href="/products.html" class="hover:text-yellow-400">Products</a>
-        <a href="/cart.html" class="hover:text-yellow-400">Cart</a>
-        <a href="/my-orders.html" class="gold-text">My Orders</a>
-
-
-    </nav>
-
-    <div id="authLinks" class="text-sm"></div>
-</header>
-
-<section class="luxury-bg min-h-screen flex items-center px-8 pt-24">
+<!-- ══ HERO ════════════════════════════════════════════════ -->
+<section class="hero-section luxury-bg px-8 md:px-16">
     <div class="max-w-3xl">
-        <p class="gold-text uppercase tracking-[0.4em] mb-4">Luxury Fragrance</p>
-        <h1 class="text-5xl md:text-7xl font-serif leading-tight mb-6">
-            Discover Your <span class="gold-text">Signature Scent</span>
+        <div class="gold-line fade-up fade-up-1"></div>
+        <p class="gold-text uppercase tracking-[0.45em] text-xs mb-5 fade-up fade-up-1">Luxury Fragrance</p>
+        <h1 class="text-5xl md:text-7xl font-serif leading-[1.05] mb-7 fade-up fade-up-2">
+            Discover Your<br /><span class="gold-text">Signature Scent</span>
         </h1>
-        <p class="text-gray-300 text-lg max-w-xl mb-8">
-            Explore elegant perfumes crafted for unforgettable moments.
+        <p class="text-gray-400 text-lg max-w-xl mb-10 leading-relaxed fade-up fade-up-3">
+            Rare ingredients, timeless craftsmanship — perfumes for people who live beautifully.
         </p>
+        <div class="flex gap-4 flex-wrap fade-up fade-up-3">
+            <a href="/products.html" class="gold-btn inline-block rounded-full px-9 py-4 font-medium">
+                Shop Collection
+            </a>
+            <a href="#about" class="inline-block rounded-full px-9 py-4 font-medium text-sm uppercase tracking-widest" style="border:1px solid rgba(202,138,4,.35);color:#ca8a04;transition:background .2s;" onmouseover="this.style.background='rgba(202,138,4,.08)'" onmouseout="this.style.background='transparent'">
+                Our Story
+            </a>
+        </div>
+    </div>
+    <div style="position:absolute;right:-80px;bottom:-60px;width:500px;height:500px;border-radius:50%;border:1px solid rgba(202,138,4,.06);pointer-events:none;"></div>
+    <div style="position:absolute;right:-30px;bottom:-10px;width:360px;height:360px;border-radius:50%;border:1px solid rgba(202,138,4,.08);pointer-events:none;"></div>
+</section>
 
-        <a href="/products.html" class="gold-btn inline-block rounded-full px-8 py-4">
-            Shop Collection
+<!-- ══ FEATURED PRODUCTS ═══════════════════════════════════ -->
+<section id="featured" class="px-8 md:px-16 py-24" style="background:#0a0a0a;">
+    <div class="text-center mb-14">
+        <div class="gold-line mx-auto" style="background:linear-gradient(90deg,transparent,#ca8a04,transparent);width:80px;"></div>
+        <p class="gold-text uppercase tracking-[0.35em] text-xs mb-3">Curated Selection</p>
+        <h2 class="text-4xl font-serif">New Arrivals</h2>
+    </div>
+    <div id="featuredProducts" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-screen-xl mx-auto"></div>
+    <div class="text-center mt-12">
+        <a href="/products.html" style="display:inline-block;border:1px solid rgba(202,138,4,.35);color:#ca8a04;padding:13px 36px;border-radius:30px;font-size:.75rem;text-transform:uppercase;letter-spacing:.2em;text-decoration:none;transition:background .2s;" onmouseover="this.style.background='rgba(202,138,4,.08)'" onmouseout="this.style.background='transparent'">
+            View Full Collection
         </a>
     </div>
 </section>
 
-<section class="px-8 py-20 bg-[#0d0d0d]">
-    <div class="text-center mb-12">
-        <p class="gold-text uppercase tracking-[0.3em] text-sm mb-3">Featured</p>
-        <h2 class="text-4xl font-serif">New Arrivals</h2>
+<!-- ══ ABOUT US ═══════════════════════════════════════════ -->
+<section id="about" class="px-8 md:px-16 py-28 max-w-screen-xl mx-auto">
+    <div class="about-grid">
+        <div>
+            <div class="gold-line"></div>
+            <p class="gold-text uppercase tracking-[0.35em] text-xs mb-4">Our Story</p>
+            <h2 class="text-4xl md:text-5xl font-serif mb-8 leading-snug">
+                Crafting Moments<br />of Pure Luxury
+            </h2>
+            <p class="text-gray-400 leading-8 mb-6">
+                Since our founding, we have dedicated ourselves to sourcing the rarest botanical ingredients from
+                around the world — Bulgarian rose, Madagascan vanilla, Omani oud — weaving them into fragrances
+                that feel like an extension of your identity.
+            </p>
+            <p class="text-gray-400 leading-8 mb-8">
+                Each bottle is a small work of art, every scent a carefully composed story.
+                We believe perfume is not merely worn — it is remembered.
+            </p>
+            <div class="grid grid-cols-3 gap-6">
+                <div><p class="text-3xl font-serif gold-text">12+</p><p class="text-gray-500 text-xs uppercase tracking-widest mt-1">Years of craft</p></div>
+                <div><p class="text-3xl font-serif gold-text">80+</p><p class="text-gray-500 text-xs uppercase tracking-widest mt-1">Fragrances</p></div>
+                <div><p class="text-3xl font-serif gold-text">30+</p><p class="text-gray-500 text-xs uppercase tracking-widest mt-1">Countries</p></div>
+            </div>
+        </div>
+        <div style="position:relative;">
+            <div style="width:100%;aspect-ratio:3/4;background:rgba(202,138,4,.06);border:1px solid rgba(202,138,4,.15);border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:5rem;color:rgba(202,138,4,.2);">🏺</div>
+            <div style="position:absolute;bottom:-20px;right:-20px;width:120px;height:120px;background:rgba(202,138,4,.08);border:1px solid rgba(202,138,4,.2);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2rem;">✨</div>
+        </div>
     </div>
-
-    <div id="featuredProducts" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
 </section>
 
-<!-- index.html -->
+<!-- ══ VALUES ═════════════════════════════════════════════ -->
+<section style="background:#070707;padding:80px 64px;">
+    <div class="max-w-screen-xl mx-auto">
+        <div class="text-center mb-14">
+            <p class="gold-text uppercase tracking-[0.35em] text-xs mb-3">Why Choose Us</p>
+            <h2 class="text-4xl font-serif">The Perfume Store Difference</h2>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:32px;">
+            <div class="value-card"><div style="font-size:2.2rem;margin-bottom:16px;">🌿</div><h3 style="font-family:serif;font-size:1.1rem;margin-bottom:10px;">Natural Ingredients</h3><p style="color:#6b7280;font-size:.85rem;line-height:1.7;">Ethically sourced botanicals from over 40 countries.</p></div>
+            <div class="value-card"><div style="font-size:2.2rem;margin-bottom:16px;">🧪</div><h3 style="font-family:serif;font-size:1.1rem;margin-bottom:10px;">Expert Perfumers</h3><p style="color:#6b7280;font-size:.85rem;line-height:1.7;">Crafted by master noses with decades of experience.</p></div>
+            <div class="value-card"><div style="font-size:2.2rem;margin-bottom:16px;">📦</div><h3 style="font-family:serif;font-size:1.1rem;margin-bottom:10px;">Luxury Packaging</h3><p style="color:#6b7280;font-size:.85rem;line-height:1.7;">Every order arrives as a gift-ready experience.</p></div>
+            <div class="value-card"><div style="font-size:2.2rem;margin-bottom:16px;">♻️</div><h3 style="font-family:serif;font-size:1.1rem;margin-bottom:10px;">Sustainable Practice</h3><p style="color:#6b7280;font-size:.85rem;line-height:1.7;">Eco-conscious production and refillable bottles.</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- ══ CONTACT US ══════════════════════════════════════════ -->
+<section id="contact" class="px-8 md:px-16 py-28 max-w-screen-xl mx-auto">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;">
+        <div>
+            <div class="gold-line"></div>
+            <p class="gold-text uppercase tracking-[0.35em] text-xs mb-4">Get In Touch</p>
+            <h2 class="text-4xl md:text-5xl font-serif mb-8 leading-snug">We'd Love<br />to Hear From You</h2>
+            <p class="text-gray-400 leading-8 mb-10">Whether you're looking for a personalized fragrance recommendation, a corporate gifting solution, or simply want to share your experience — our team is here for you.</p>
+            <div style="display:flex;flex-direction:column;gap:20px;">
+                <div style="display:flex;align-items:center;gap:16px;"><div style="width:44px;height:44px;border-radius:12px;background:rgba(202,138,4,.1);border:1px solid rgba(202,138,4,.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">📍</div><div><p style="font-size:.75rem;text-transform:uppercase;letter-spacing:.15em;color:#6b7280;">Address</p><p style="color:#d1d5db;font-size:.9rem;margin-top:2px;">123 Fragrance Avenue, Cairo, Egypt</p></div></div>
+                <div style="display:flex;align-items:center;gap:16px;"><div style="width:44px;height:44px;border-radius:12px;background:rgba(202,138,4,.1);border:1px solid rgba(202,138,4,.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">✉️</div><div><p style="font-size:.75rem;text-transform:uppercase;letter-spacing:.15em;color:#6b7280;">Email</p><p style="color:#d1d5db;font-size:.9rem;margin-top:2px;">hello@perfumestore.com</p></div></div>
+                <div style="display:flex;align-items:center;gap:16px;"><div style="width:44px;height:44px;border-radius:12px;background:rgba(202,138,4,.1);border:1px solid rgba(202,138,4,.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">📞</div><div><p style="font-size:.75rem;text-transform:uppercase;letter-spacing:.15em;color:#6b7280;">Phone</p><p style="color:#d1d5db;font-size:.9rem;margin-top:2px;">+20 100 000 0000</p></div></div>
+            </div>
+        </div>
+        <div style="background:rgba(255,255,255,.02);border:1px solid rgba(202,138,4,.15);border-radius:24px;padding:40px;">
+            <h3 style="font-family:serif;font-size:1.4rem;margin-bottom:24px;color:#ca8a04;">Send a Message</h3>
+            <form onsubmit="handleContactForm(event)" style="display:flex;flex-direction:column;gap:16px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;"><input class="contact-input" type="text" placeholder="First name" required /><input class="contact-input" type="text" placeholder="Last name" required /></div>
+                <input class="contact-input" type="email" placeholder="Email address" required />
+                <input class="contact-input" type="text" placeholder="Subject" />
+                <textarea class="contact-input" rows="5" placeholder="Your message…" required style="resize:none;"></textarea>
+                <button type="submit" class="gold-btn rounded-xl py-4" style="font-size:.8rem;letter-spacing:.15em;">Send Message</button>
+            </form>
+            <p id="contactSuccess" style="display:none;color:#86efac;font-size:.85rem;margin-top:12px;text-align:center;">✓ Message sent! We'll be in touch soon.</p>
+        </div>
+    </div>
+</section>
+
 <script src="/js/api.js"></script>
+<script src="/js/load-common.js"></script>
 <script src="/js/products.js"></script>
 <script>
-    renderAuthLinks();
     loadFeaturedProducts();
+    function handleContactForm(e) {
+        e.preventDefault();
+        const success = document.getElementById('contactSuccess');
+        success.style.display = 'block';
+        e.target.reset();
+        setTimeout(() => { success.style.display = 'none'; }, 5000);
+    }
 </script>
-
 </body>
 </html>

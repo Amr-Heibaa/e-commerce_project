@@ -2,74 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Cart | Perfume Store</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Cart | Perfume Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        @keyframes fadeUp { from { opacity:0;transform:translateY(16px); } to { opacity:1;transform:translateY(0); } }
+        .fade-up { animation: fadeUp .5s ease both; }
+        .cart-row { transition: opacity .2s; }
+        .cart-row.removing { opacity: 0; }
+    </style>
 </head>
-
 <body class="bg-black text-white">
 
-<header class="navbar px-8 py-4 flex justify-between items-center border-b border-yellow-500/20">
-    <a href="/index.html" class="text-2xl font-serif gold-text">Perfume Store</a>
-
-    <nav class="hidden md:flex gap-8 text-sm uppercase tracking-widest">
-        <a href="/index.html" class="hover:text-yellow-400">Home</a>
-        <a href="/products.html" class="hover:text-yellow-400">Products</a>
-        <a href="/cart.html" class="gold-text">Cart</a>
-        <a href="/my-orders.html" class="gold-text">My Orders</a>
-
-    </nav>
-
-    <div id="authLinks" class="text-sm"></div>
-</header>
-
-<main class="px-8 py-12">
-    <div class="mb-10">
-        <p class="gold-text uppercase tracking-[0.3em] text-sm mb-3">Shopping Bag</p>
+<main class="px-6 md:px-12 py-14 max-w-screen-xl mx-auto">
+    <div class="mb-12 fade-up">
+        <p class="gold-text uppercase tracking-[0.35em] text-xs mb-3">Shopping Bag</p>
         <h1 class="text-5xl font-serif">Your Cart</h1>
     </div>
-
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <section class="lg:col-span-2">
-            <div id="cartItems" class="space-y-5"></div>
-        </section>
-
-        <aside class="glass-card rounded-3xl p-6 h-fit">
-            <h2 class="text-2xl font-serif gold-text mb-6">Order Summary</h2>
-
-            <div class="flex justify-between text-gray-300 mb-3">
-                <span>Subtotal</span>
-                <span id="cartSubtotal">$0.00</span>
+        <section class="lg:col-span-2"><div id="cartItems" class="space-y-5"></div></section>
+        <aside class="glass-card rounded-3xl p-7 h-fit sticky top-24 fade-up">
+            <h2 class="text-2xl font-serif gold-text mb-7">Order Summary</h2>
+            <div class="space-y-3 mb-6">
+                <div class="flex justify-between text-gray-400 text-sm"><span>Subtotal</span><span id="cartSubtotal" class="text-white">$0.00</span></div>
+                <div class="flex justify-between text-gray-400 text-sm"><span>Shipping</span><span class="text-green-400">Free</span></div>
+                <div class="flex justify-between text-gray-400 text-sm"><span>Tax</span><span class="text-white">Calculated at checkout</span></div>
             </div>
-
-            <div class="flex justify-between text-gray-300 mb-3">
-                <span>Shipping</span>
-                <span>Free</span>
+            <div style="height:1px;background:rgba(202,138,4,.15);margin-bottom:20px;"></div>
+            <div class="flex justify-between items-center mb-7"><span class="font-medium">Total</span><span class="text-2xl font-serif gold-text" id="cartTotal">$0.00</span></div>
+            <a href="/checkout.html" class="gold-btn block text-center rounded-2xl py-4 font-medium mb-3" style="font-size:.8rem;letter-spacing:.15em;">Proceed to Checkout</a>
+            <a href="/products.html" class="block text-center rounded-2xl py-4 text-sm text-gray-400 hover:text-white transition-colors" style="border:1px solid rgba(255,255,255,.08);">Continue Shopping</a>
+            <div class="mt-6 pt-6" style="border-top:1px solid rgba(202,138,4,.1);">
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3 text-xs text-gray-500"><span>🔒</span> Secure SSL checkout</div>
+                    <div class="flex items-center gap-3 text-xs text-gray-500"><span>🚚</span> Free shipping on all orders</div>
+                    <div class="flex items-center gap-3 text-xs text-gray-500"><span>↩️</span> Easy returns within 30 days</div>
+                </div>
             </div>
-
-            <div class="border-t border-yellow-500/20 my-5"></div>
-
-            <div class="flex justify-between text-xl font-semibold mb-6">
-                <span>Total</span>
-                <span class="gold-text" id="cartTotal">$0.00</span>
-            </div>
-
-            <a href="/checkout.html" class="gold-btn block text-center rounded-xl py-3">
-                Proceed To Checkout
-            </a>
         </aside>
     </div>
 </main>
 
-<!-- cart.html -->
 <script src="/js/api.js"></script>
+<script src="/js/load-common.js"></script>
 <script src="/js/products.js"></script>
 <script src="/js/cart.js"></script>
 <script>
     requireCartAuth();
-    renderAuthLinks();
     loadCart();
 </script>
-
 </body>
 </html>

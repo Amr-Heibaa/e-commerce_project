@@ -2,44 +2,52 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Orders | Perfume Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        @keyframes fadeUp { from { opacity:0;transform:translateY(16px); } to { opacity:1;transform:translateY(0); } }
+        .fade-up { animation: fadeUp .5s ease both; }
+        .order-tab { padding:10px 22px;border-radius:30px;font-size:.75rem;text-transform:uppercase;letter-spacing:.15em;cursor:pointer;border:1px solid rgba(202,138,4,.2);background:transparent;color:#9ca3af;transition:all .2s; }
+        .order-tab.active,.order-tab:hover { background:rgba(202,138,4,.12);border-color:rgba(202,138,4,.5);color:#ca8a04; }
+    </style>
 </head>
-
 <body class="bg-black text-white">
 
-<header class="navbar px-8 py-4 flex justify-between items-center border-b border-yellow-500/20">
-    <a href="/index.html" class="text-2xl font-serif gold-text">Perfume Store</a>
-
-    <nav class="hidden md:flex gap-8 text-sm uppercase tracking-widest">
-        <a href="/index.html" class="hover:text-yellow-400">Home</a>
-        <a href="/products.html" class="hover:text-yellow-400">Products</a>
-        <a href="/cart.html" class="hover:text-yellow-400">Cart</a>
-        <a href="/my-orders.html" class="gold-text">My Orders</a>
-    </nav>
-
-    <div id="authLinks" class="text-sm"></div>
-</header>
-
-<main class="px-8 py-12">
-    <div class="mb-10">
-        <p class="gold-text uppercase tracking-[0.3em] text-sm mb-3">Account</p>
-        <h1 class="text-5xl font-serif">My Orders</h1>
+<main class="px-6 md:px-12 py-14 max-w-screen-xl mx-auto">
+    <div class="mb-10 fade-up"><p class="gold-text uppercase tracking-[0.35em] text-xs mb-3">Account</p><h1 class="text-5xl font-serif">My Orders</h1></div>
+    <div class="flex flex-wrap gap-3 mb-8 fade-up">
+        <button class="order-tab active" onclick="filterOrders('',this)">All</button>
+        <button class="order-tab" onclick="filterOrders('PENDING',this)">Pending</button>
+        <button class="order-tab" onclick="filterOrders('PAID',this)">Paid</button>
+        <button class="order-tab" onclick="filterOrders('SHIPPED',this)">Shipped</button>
+        <button class="order-tab" onclick="filterOrders('DELIVERED',this)">Delivered</button>
+        <button class="order-tab" onclick="filterOrders('CANCELLED',this)">Cancelled</button>
     </div>
-
-    <div id="ordersContainer" class="space-y-6"></div>
+    <div id="ordersContainer" class="space-y-6 fade-up"></div>
 </main>
 
-<!-- my-orders.html -->
 <script src="/js/api.js"></script>
+<script src="/js/load-common.js"></script>
 <script src="/js/products.js"></script>
-<script src="/js/orders.js"></script>
 <script>
-    requireOrderAuth();
-    renderAuthLinks();
-    loadMyOrders();
+    let _allOrders=[],_activeFilter='';
+    function requireOrderAuth(){if(!api.isLoggedIn())window.location.href='/login.html';}
+    function formatOrderDate(d){if(!d)return'—';return new Date(d).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});}
+    function money(v){return'$'+Number(v||0).toFixed(2);}
+    const statusMap={PENDING:'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',PAID:'bg-blue-500/20 text-blue-300 border-blue-500/30',SHIPPED:'bg-purple-500/20 text-purple-300 border-purple-500/30',DELIVERED:'bg-green-500/20 text-green-300 border-green-500/30',CANCELLED:'bg-red-500/20 text-red-300 border-red-500/30'};
+    function filterOrders(status,btn){_activeFilter=status;document.querySelectorAll('.order-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderOrders(status?_allOrders.filter(o=>o.status===status):_allOrders);}
+    function renderOrders(orders){
+        const c=document.getElementById('ordersContainer');if(!c)return;
+        if(!orders||orders.length===0){c.innerHTML=`<div class="glass-card rounded-3xl p-12 text-center"><div style="font-size:3rem;margin-bottom:16px;">📦</div><h2 class="text-2xl font-serif gold-text mb-3">No orders yet</h2><p class="text-gray-400 mb-6">Discover your next signature scent.</p><a href="/products.html" class="gold-btn inline-block rounded-xl px-8 py-3">Shop Collection</a></div>`;return;}
+        c.innerHTML=orders.map(order=>{
+            const items=order.items||order.orderItems||[],status=order.status||'PENDING',cls=statusMap[status]||'bg-gray-500/20 text-gray-300',total=order.totalAmount||order.total||0;
+            return`<div class="glass-card rounded-3xl p-6"><div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5"><div><p class="gold-text text-xs uppercase tracking-[0.25em] mb-1">Order #${order.id}</p><p class="text-gray-500 text-sm">${formatOrderDate(order.createdAt)}</p></div><div class="flex items-center gap-4"><span class="text-xl font-serif gold-text">${money(total)}</span><span class="rounded-full px-3 py-1 text-xs border ${cls}">${status}</span></div></div>${items.length?`<div class="space-y-3 mb-5 pt-4" style="border-top:1px solid rgba(202,138,4,.08);">${items.map(it=>{const n=it.productName||it.name||'Perfume',sz=it.size||it.variantSize||'',p=Number(it.price||it.unitPrice||0),q=it.quantity||1,im=it.imageUrl||it.productImage||'/images/products/default-perfume.png';return`<div class="flex items-center gap-4"><img src="${im}" style="width:52px;height:60px;object-fit:cover;border-radius:10px;"><div class="flex-1"><p class="font-medium text-sm">${n}</p><p class="text-gray-500 text-xs">${sz} × ${q}</p></div><p class="gold-text text-sm">${money(p*q)}</p></div>`}).join('')}</div>`:''}<div class="flex flex-wrap gap-3 pt-4" style="border-top:1px solid rgba(202,138,4,.08);">${status==='DELIVERED'?`<a href="/products.html" class="outline-gold rounded-xl px-4 py-2 text-sm">Buy Again</a>`:''}${status==='PAID'||status==='DELIVERED'?`<button onclick="openRefundModal(${order.id})" class="rounded-xl px-4 py-2 text-sm border border-red-400/30 text-red-300">Request Refund</button>`:''}</div></div>`}).join('');
+    }
+    async function loadMyOrders(){const c=document.getElementById('ordersContainer');c.innerHTML=`<div class="glass-card rounded-3xl p-8 text-center"><div style="width:32px;height:32px;border:2px solid rgba(202,138,4,.3);border-top-color:#ca8a04;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto;"></div></div>`;try{_allOrders=await api.get('/orders/my');if(!Array.isArray(_allOrders))_allOrders=_allOrders?.content||[];_allOrders.sort((a,b)=>(b.id||0)-(a.id||0));renderOrders(_allOrders);}catch(e){c.innerHTML=`<p class="text-red-300">${e.message}</p>`;}}
+    function openRefundModal(id){const reason=prompt('Reason:');if(!reason)return;api.post('/refunds',{orderId:Number(id),reason:reason.trim()}).then(()=>alert('Refund submitted.')).catch(e=>alert(e.message));}
+    requireOrderAuth();loadMyOrders();
 </script>
-
 </body>
 </html>

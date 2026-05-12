@@ -2,193 +2,116 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Product Details | Perfume Store</title>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        @keyframes fadeUp { from { opacity:0;transform:translateY(16px); } to { opacity:1;transform:translateY(0); } }
+        .fade-up { animation: fadeUp .5s ease both; }
+        .thumb-img { width:100%;height:90px;object-fit:cover;border-radius:12px;cursor:pointer;border:1px solid rgba(202,138,4,.15);transition:border-color .2s,transform .2s; }
+        .thumb-img:hover,.thumb-img.active { border-color:rgba(202,138,4,.6);transform:scale(1.02); }
+        .variant-label { display:flex;justify-content:space-between;align-items:center;border:1px solid rgba(202,138,4,.2);border-radius:14px;padding:14px 18px;cursor:pointer;transition:background .2s,border-color .2s; }
+        .variant-label:has(input:checked),.variant-label.selected { background:rgba(202,138,4,.1);border-color:rgba(202,138,4,.6); }
+        .variant-label:hover { background:rgba(202,138,4,.06); }
+        .qty-btn { width:38px;height:38px;border-radius:10px;border:1px solid rgba(202,138,4,.3);background:transparent;color:#fff;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:background .2s; }
+        .qty-btn:hover { background:rgba(202,138,4,.1); }
+        #review-modal.show { display:flex; }
+        .star-display { color:#f5c842;font-size:1rem; }
+        .star-empty { color:#374151;font-size:1rem; }
+    </style>
 </head>
-
 <body class="bg-black text-white min-h-screen flex flex-col">
 
-<!-- ================= HEADER ================= -->
-
-<header class="sticky top-0 z-50 bg-black/90 backdrop-blur border-b border-yellow-500/20">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-
-        <!-- Logo -->
-        <a href="/index.html"
-           class="text-2xl md:text-3xl font-serif gold-text tracking-wide">
-            Perfume Store
-        </a>
-
-        <!-- Navigation -->
-        <nav class="hidden md:flex gap-8 text-sm uppercase tracking-[0.2em]">
-            <a href="/index.html" class="hover:text-yellow-400 transition">
-                Home
-            </a>
-
-            <a href="/products.html" class="gold-text font-semibold">
-                Products
-            </a>
-
-            <a href="/cart.html" class="hover:text-yellow-400 transition">
-                Cart
-            </a>
-
-            <a href="/my-orders.html" class="hover:text-yellow-400 transition">
-                My Orders
-            </a>
-        </nav>
-
-        <!-- Auth -->
-        <div id="authLinks" class="text-sm flex items-center gap-4"></div>
-
-    </div>
-</header>
-
-<!-- ================= PRODUCT DETAILS ================= -->
-
-<main class="flex-1">
-
-    <!-- Product Section -->
-    <section id="productDetails"
-             class="max-w-7xl mx-auto px-6 py-14">
-    </section>
-
-    <!-- ================= REVIEWS ================= -->
-
-    <section class="max-w-7xl mx-auto px-6 pb-20">
-
-        <div class="flex items-center justify-between mb-8">
-            <div>
-                <p class="gold-text uppercase tracking-[0.3em] text-xs mb-2">
-                    Customer Feedback
-                </p>
-
-                <h2 class="text-4xl font-serif">
-                    Reviews
-                </h2>
-            </div>
-
-            <button
-                    onclick="document.getElementById('review-modal').classList.add('show')"
-                    class="gold-btn rounded-xl px-6 py-3">
-                Write Review
-            </button>
+<main class="flex-1 max-w-7xl mx-auto px-6 py-14 w-full">
+    <section id="productDetails" class="fade-up mb-20"></section>
+    <section class="fade-up">
+        <div class="flex items-center justify-between mb-10">
+            <div><p class="gold-text uppercase tracking-[0.35em] text-xs mb-2">Customer Feedback</p><h2 class="text-4xl font-serif">Reviews</h2></div>
+            <button onclick="document.getElementById('review-modal').classList.add('show')" class="gold-btn rounded-xl px-6 py-3">Write a Review</button>
         </div>
-
-        <!-- Reviews List -->
-        <div id="reviews-list" class="space-y-6">
-            <div class="glass-card rounded-3xl p-8 text-center">
-                <p class="text-gray-400">Loading reviews...</p>
-            </div>
-        </div>
-
+        <div id="reviews-list" class="space-y-6"><div class="glass-card rounded-3xl p-8 text-center"><p class="text-gray-400">Loading reviews…</p></div></div>
     </section>
-
 </main>
 
-<!-- ================= REVIEW MODAL ================= -->
-
-<div id="review-modal"
-     class="fixed inset-0 bg-black/70 backdrop-blur hidden items-center justify-center z-50 p-4">
-
+<div id="review-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm hidden items-center justify-center z-[2000] p-4">
     <div class="glass-card rounded-3xl p-8 w-full max-w-xl relative">
-
-        <!-- Close -->
-        <button onclick="closeReviewModal()"
-                class="absolute top-5 right-5 text-gray-400 hover:text-white text-xl">
-            ✕
-        </button>
-
-        <div class="mb-8">
-            <p class="gold-text uppercase tracking-[0.3em] text-xs mb-2">
-                Share Your Experience
-            </p>
-
-            <h3 class="text-3xl font-serif">
-                Add Review
-            </h3>
-        </div>
-
-        <!-- Rating -->
-        <div class="mb-6">
-            <label class="block mb-3 text-sm text-gray-300">
-                Rating
-            </label>
-
-            <div id="rating-stars" class="flex gap-2"></div>
-
-            <input type="hidden" id="rating-value" value="0">
-        </div>
-
-        <!-- Comment -->
-        <div class="mb-6">
-            <label class="block mb-3 text-sm text-gray-300">
-                Comment
-            </label>
-
-            <textarea
-                    id="review-comment"
-                    rows="5"
-                    class="input-luxury w-full rounded-2xl px-4 py-3 resize-none"
-                    placeholder="Write your thoughts about this perfume..."></textarea>
-        </div>
-
-        <!-- Submit -->
-        <button
-                id="submit-review-btn"
-                onclick="submitReview()"
-                class="gold-btn rounded-xl px-6 py-3 w-full">
-            Submit Review
-        </button>
-
+        <button onclick="closeReviewModal()" class="absolute top-5 right-5 text-gray-400 hover:text-white text-xl transition-colors">✕</button>
+        <p class="gold-text uppercase tracking-[0.3em] text-xs mb-2">Share Your Experience</p>
+        <h3 class="text-3xl font-serif mb-8">Add Review</h3>
+        <div class="mb-6"><label class="block mb-3 text-sm text-gray-400 uppercase tracking-widest">Rating</label><div id="rating-stars" class="flex gap-2"></div><input type="hidden" id="rating-value" value="0" /></div>
+        <div class="mb-6"><label class="block mb-3 text-sm text-gray-400 uppercase tracking-widest">Comment</label><textarea id="review-comment" rows="5" class="input-luxury w-full rounded-2xl px-4 py-3 resize-none" placeholder="Write your thoughts about this perfume…"></textarea></div>
+        <button id="submit-review-btn" onclick="submitReview()" class="gold-btn rounded-xl px-6 py-3 w-full">Submit Review</button>
     </div>
 </div>
 
-<!-- ================= FOOTER ================= -->
-
-<footer class="border-t border-yellow-500/10 py-6 text-center text-gray-500 text-sm">
-    © 2026 Perfume Store. All rights reserved.
-</footer>
-
-<!-- ================= STYLES ================= -->
-
-<style>
-
-    #review-modal.show {
-        display: flex;
-    }
-
-</style>
-
-<!-- ================= SCRIPTS ================= -->
-
 <script src="/js/api.js"></script>
+<script src="/js/load-common.js"></script>
 <script src="/js/products.js"></script>
 <script src="/js/cart.js"></script>
-<script src="/js/reviews.js"></script>
-
-<!-- product-details.html -->
-<script src="/js/api.js"></script>
-<script src="/js/products.js"></script>
-<script src="/js/cart.js"></script>
-<script src="/js/orders.js"></script>
 <script src="/js/reviews.js"></script>
 <script>
     renderAuthLinks();
-    loadProductDetails();
-
-    const productId = new URLSearchParams(window.location.search).get('id');
-
-    if (productId) {
-        loadReviews(productId);
+    async function loadProductDetails() {
+        const container = document.getElementById('productDetails');
+        if (!container) return;
+        const id = new URLSearchParams(window.location.search).get('id');
+        if (!id) { container.innerHTML = `<p class="text-red-300">Product not found.</p>`; return; }
+        try {
+            const product = await api.get(`/products/${id}`);
+            const images = product.images || [];
+            const variants = product.variants || [];
+            const primary = images.find(i=>i.isPrimary) || images[0];
+            const mainImg = primary?.imageUrl || '/images/products/default-perfume.png';
+            container.innerHTML = `
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 items-start">
+                <div>
+                    <div class="glass-card rounded-3xl p-4 mb-4">
+                        <img id="mainProductImg" src="${mainImg}" alt="${product.name}" class="w-full rounded-2xl object-cover" style="max-height:560px;" onerror="this.src='/images/products/default-perfume.png'"/>
+                    </div>
+                    ${images.length>1?`<div class="grid grid-cols-4 gap-3">${images.map((img,i)=>`<img src="${img.imageUrl}" class="thumb-img ${i===0?'active':''}" onclick="switchImg(this,'${img.imageUrl}')" onerror="this.style.display='none'"/>`).join('')}</div>`:''}
+                </div>
+                <div class="pt-2">
+                    <p class="gold-text uppercase tracking-[0.35em] text-xs mb-3">${product.fragranceFamily||'Luxury'}</p>
+                    <h1 class="text-5xl font-serif mb-5">${product.name}</h1>
+                    <p class="text-gray-400 leading-8 mb-8">${product.description||''}</p>
+                    ${variants.length?`<div class="glass-card rounded-3xl p-6 mb-8"><h2 class="text-lg font-serif gold-text mb-4">Choose Size</h2><div class="space-y-3">${variants.map((v,i)=>`<label class="variant-label ${i===0?'selected':''}"><div class="flex items-center gap-3"><input type="radio" name="variantId" value="${v.id}" ${i===0?'checked':''} class="accent-yellow-500" onchange="document.querySelectorAll('.variant-label').forEach(l=>l.classList.remove('selected'));this.closest('.variant-label').classList.add('selected')"/><span class="font-medium">${v.size}</span></div><div class="text-right"><div class="gold-text font-semibold">$${Number(v.price||0).toFixed(2)}</div><div class="text-xs mt-1 ${v.stockQuantity>0?'text-green-400':'text-red-400'}">${v.stockQuantity>0?`${v.stockQuantity} in stock`:'Out of stock'}</div></div></label>`).join('')}</div></div>`:''}
+                    <div class="flex items-center gap-4 mb-8 flex-wrap">
+                        <div class="flex items-center gap-0">
+                            <button class="qty-btn" onclick="adjustQty(-1)">−</button>
+                            <span id="qtyDisplay" style="width:48px;height:38px;display:flex;align-items:center;justify-content:center;border-top:1px solid rgba(202,138,4,.3);border-bottom:1px solid rgba(202,138,4,.3);font-size:.95rem;">1</span>
+                            <button class="qty-btn" onclick="adjustQty(1)">+</button>
+                        </div>
+                        <input type="hidden" id="quantityInput" value="1"/>
+                        <button onclick="addToCartAndShowDrawer()" class="gold-btn rounded-xl px-8 py-3 flex-1" style="min-width:180px;">Add to Cart</button>
+                    </div>
+                    <a href="/products.html" class="text-gray-500 hover:text-yellow-400 transition-colors text-sm">← Back to collection</a>
+                </div>
+            </div>`;
+        } catch(err) { container.innerHTML=`<p class="text-red-300">${err.message}</p>`; }
     }
 
+    function switchImg(el,src){ document.getElementById('mainProductImg').src=src;document.querySelectorAll('.thumb-img').forEach(t=>t.classList.remove('active'));el.classList.add('active'); }
+    let _qty=1;
+    function adjustQty(d){ _qty=Math.max(1,_qty+d);document.getElementById('qtyDisplay').textContent=_qty;document.getElementById('quantityInput').value=_qty; }
+    async function addToCartAndShowDrawer(){
+        if(!api.isLoggedIn()){window.location.href='/login.html';return;}
+        const variantInput=document.querySelector('input[name="variantId"]:checked');
+        if(!variantInput){alert('Please choose a size first.');return;}
+        const btn=document.querySelector('button[onclick="addToCartAndShowDrawer()"]');
+        const orig=btn.textContent;btn.textContent='Adding…';btn.disabled=true;
+        try{
+            await api.post('/cart/items',{variantId:Number(variantInput.value),quantity:Number(document.getElementById('quantityInput').value||1)});
+            await openCartDrawer();
+            updateCartBadge();
+        }catch(e){alert(e.message);}
+        finally{btn.textContent=orig;btn.disabled=false;}
+    }
+
+    loadProductDetails();
+    const productId = new URLSearchParams(window.location.search).get('id');
+    if(productId) loadReviews(productId);
     initRatingStars();
 </script>
-
 </body>
 </html>
