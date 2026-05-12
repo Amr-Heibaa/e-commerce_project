@@ -163,7 +163,7 @@ body {
     color: var(--gold);
     text-decoration: none;
     white-space: nowrap;
-    margin-left: 12px;
+    margin-left: -170px;
 }
 
 .desktop-nav {
@@ -324,6 +324,53 @@ body {
     height: 1px;
     background: rgba(202,138,4,.12);
     margin: 10px 0;
+}
+
+/* Fragrance dropdown */
+.side-link-group {
+    border-bottom: 1px solid rgba(202,138,4,.08);
+}
+.side-link-toggle {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-bottom: none !important;
+    font-size: 0.95rem;
+    font-family: inherit;
+}
+.side-chevron {
+    display: inline-block;
+    transition: transform 0.25s ease;
+    font-size: 1.1rem;
+    color: rgba(202,138,4,.5);
+}
+.side-chevron.open {
+    transform: rotate(90deg);
+}
+.side-submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background: rgba(202,138,4,.03);
+}
+.side-submenu.open {
+    max-height: 200px;
+}
+.side-sublink {
+    display: block;
+    padding: 12px 28px 12px 44px;
+    font-size: 0.85rem;
+    color: #9ca3af;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(202,138,4,.05);
+    transition: color 0.2s, background 0.2s;
+    letter-spacing: 0.05em;
+}
+.side-sublink:hover {
+    color: #fbbf24;
+    background: rgba(202,138,4,.06);
 }
 .side-footer {
     padding: 20px 28px;
@@ -486,41 +533,40 @@ body {
     }
 }
 
-/* Large screens: permanent sidebar */
+/* Large screens: sidebar behavior */
 @media (min-width: 1024px) {
-    /* keep sidebar open */
+
     #sideMenu {
-        transform: translateX(0) !important;
+        transform: translateX(-100%);
     }
+
+    #sideMenu.open {
+        transform: translateX(0);
+    }
+
     #sideMenuOverlay {
         display: none !important;
     }
-    /* hide the close button – sidebar is always there */
-    .side-close {
-        display: none;
-    }
-    /* hide hamburger */
+
+    /* SHOW hamburger on desktop */
     .hamburger-btn {
-        display: none !important;
+        display: flex !important;
     }
+
     .desktop-nav {
         display: flex !important;
     }
 
-    /* Shift the fixed navbar to the right of the sidebar */
-    .site-navbar {
+    body.sidebar-open .site-navbar {
         left: 300px;
         width: calc(100% - 300px);
     }
 
-    /* Shift all main content to the right (except fixed elements) */
-    body {
+    body.sidebar-open {
         padding-left: 300px;
     }
 
-    /* Footer also needs the same left padding so it aligns with content */
-    .site-footer {
+    body.sidebar-open .site-footer {
         padding-left: calc(300px + 64px);
-
     }
 }

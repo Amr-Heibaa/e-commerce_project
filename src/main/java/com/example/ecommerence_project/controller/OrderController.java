@@ -30,6 +30,11 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getMyOrders());
     }
 
+    /** GET /api/orders/my — same as above, alternative endpoint */
+    @GetMapping("/my")
+    public ResponseEntity<List<OrderResponse>> getMyOrdersAlt() {
+        return ResponseEntity.ok(orderService.getMyOrders());
+    }
     /** GET /api/orders/{id} — get a single order */
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> getOrder(@PathVariable Long id) {

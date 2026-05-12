@@ -1,5 +1,14 @@
 /* products.js — updated with cart drawer integration */
 
+// ── Sidebar fragrance dropdown ──────────────────────────────
+function toggleFragranceMenu() {
+    const submenu  = document.getElementById('fragranceSubmenu');
+    const chevron  = document.getElementById('fragranceChevron');
+    if (!submenu) return;
+    submenu.classList.toggle('open');
+    chevron.classList.toggle('open');
+}
+
 let allProducts = [];
 
 function renderAuthLinks() {
@@ -151,7 +160,31 @@ async function loadProducts() {
         allProducts = await api.get('/products');
         allProducts = (allProducts.content || allProducts).filter(p => p.active !== false);
         populateFamilyFilter(allProducts);
-        renderProducts(allProducts);
+
+        // Apply gender filter from URL param if present
+        const params = new URLSearchParams(window.location.search);
+        const gender = params.get('gender');
+        if (gender) {
+            const genderSelect = document.getElementById('genderFilter');
+            if (genderSelect) genderSelect.value = gender;
+            renderProducts(allProducts.filter(p =>
+                (p.gender || p.targetGender || '').toLowerCase() === gender.toLowerCase()
+            ));
+            // Highlight active gender in sidebar
+            document.querySelectorAll('.side-sublink').forEach(link => {
+                const url = new URL(link.href, window.location.origin);
+                if (url.searchParams.get('gender') === gender) {
+                    link.style.color = '#fbbf24';
+                    // Also open the submenu
+                    const submenu = document.getElementById('fragranceSubmenu');
+                    const chevron = document.getElementById('fragranceChevron');
+                    if (submenu) submenu.classList.add('open');
+                    if (chevron) chevron.classList.add('open');
+                }
+            });
+        } else {
+            renderProducts(allProducts);
+        }
     } catch (error) {
         grid.innerHTML = `<p class="text-red-300 col-span-4">${error.message}</p>`;
     }

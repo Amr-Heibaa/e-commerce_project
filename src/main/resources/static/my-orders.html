@@ -46,8 +46,67 @@
             return`<div class="glass-card rounded-3xl p-6"><div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5"><div><p class="gold-text text-xs uppercase tracking-[0.25em] mb-1">Order #${order.id}</p><p class="text-gray-500 text-sm">${formatOrderDate(order.createdAt)}</p></div><div class="flex items-center gap-4"><span class="text-xl font-serif gold-text">${money(total)}</span><span class="rounded-full px-3 py-1 text-xs border ${cls}">${status}</span></div></div>${items.length?`<div class="space-y-3 mb-5 pt-4" style="border-top:1px solid rgba(202,138,4,.08);">${items.map(it=>{const n=it.productName||it.name||'Perfume',sz=it.size||it.variantSize||'',p=Number(it.price||it.unitPrice||0),q=it.quantity||1,im=it.imageUrl||it.productImage||'/images/products/default-perfume.png';return`<div class="flex items-center gap-4"><img src="${im}" style="width:52px;height:60px;object-fit:cover;border-radius:10px;"><div class="flex-1"><p class="font-medium text-sm">${n}</p><p class="text-gray-500 text-xs">${sz} × ${q}</p></div><p class="gold-text text-sm">${money(p*q)}</p></div>`}).join('')}</div>`:''}<div class="flex flex-wrap gap-3 pt-4" style="border-top:1px solid rgba(202,138,4,.08);">${status==='DELIVERED'?`<a href="/products.html" class="outline-gold rounded-xl px-4 py-2 text-sm">Buy Again</a>`:''}${status==='PAID'||status==='DELIVERED'?`<button onclick="openRefundModal(${order.id})" class="rounded-xl px-4 py-2 text-sm border border-red-400/30 text-red-300">Request Refund</button>`:''}</div></div>`}).join('');
     }
     async function loadMyOrders(){const c=document.getElementById('ordersContainer');c.innerHTML=`<div class="glass-card rounded-3xl p-8 text-center"><div style="width:32px;height:32px;border:2px solid rgba(202,138,4,.3);border-top-color:#ca8a04;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto;"></div></div>`;try{_allOrders=await api.get('/orders/my');if(!Array.isArray(_allOrders))_allOrders=_allOrders?.content||[];_allOrders.sort((a,b)=>(b.id||0)-(a.id||0));renderOrders(_allOrders);}catch(e){c.innerHTML=`<p class="text-red-300">${e.message}</p>`;}}
-    function openRefundModal(id){const reason=prompt('Reason:');if(!reason)return;api.post('/refunds',{orderId:Number(id),reason:reason.trim()}).then(()=>alert('Refund submitted.')).catch(e=>alert(e.message));}
-    requireOrderAuth();loadMyOrders();
+    function openRefundModal(id) {
+        const oldModal = document.getElementById('refundModal');
+        if (oldModal) oldModal.remove();
+
+        const modal = document.createElement('div');
+        modal.id = 'refundModal';
+        modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4';
+
+        modal.innerHTML = `
+        <div class="glass-card rounded-3xl p-8 max-w-md w-full">
+            <h2 class="text-2xl font-serif gold-text mb-3">Request Refund</h2>
+            <p class="text-gray-400 text-sm mb-5">Order #${id}</p>
+
+            <textarea id="refundReason"
+                class="w-full bg-black/40 border border-yellow-500/20 rounded-xl p-4 text-white outline-none focus:border-yellow-500"
+                rows="5"
+                placeholder="Write your refund reason..."></textarea>
+
+            <div class="flex justify-end gap-3 mt-6">
+                <button onclick="closeRefundModal()"
+                    class="rounded-xl px-5 py-2 border border-gray-600 text-gray-300">
+                    Cancel
+                </button>
+
+                <button onclick="submitRefund(${id})"
+                    class="gold-btn rounded-xl px-5 py-2">
+                    Submit
+                </button>
+            </div>
+        </div>
+    `;
+
+        document.body.appendChild(modal);
+    }
+
+    function closeRefundModal() {
+        document.getElementById('refundModal')?.remove();
+    }
+
+    async function submitRefund(id) {
+        const reason = document.getElementById('refundReason')?.value.trim();
+
+        if (!reason) {
+            alert('Please enter a refund reason.');
+            return;
+        }
+
+        try {
+            await api.post('/refunds', {
+                orderId: Number(id),
+                reason: reason
+            });
+
+            closeRefundModal();
+            alert('Refund submitted successfully.');
+        } catch (e) {
+            alert(e.message);
+        }
+    }    requireOrderAuth();loadMyOrders();
+
+
 </script>
 </body>
 

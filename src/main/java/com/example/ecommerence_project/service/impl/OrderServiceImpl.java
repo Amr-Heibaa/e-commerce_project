@@ -6,6 +6,10 @@ import com.example.ecommerence_project.dto.response.PaymentResponse;
 import com.example.ecommerence_project.dto.request.OrderStatusUpdateRequest;
 import com.example.ecommerence_project.repository.AddressRepository;
 import com.example.ecommerence_project.service.PaymentService;
+import com.example.ecommerence_project.entity.Payment;
+import com.example.ecommerence_project.enums.PaymentMethod;
+import com.example.ecommerence_project.enums.PaymentStatus;
+import com.example.ecommerence_project.repository.PaymentRepository;
 import com.example.ecommerence_project.entity.*;
 import com.example.ecommerence_project.enums.OrderStatus;
 import com.example.ecommerence_project.exception.BadRequestException;
@@ -38,6 +42,7 @@ public class OrderServiceImpl implements OrderService {
     private final PaymentService paymentService;
     private final OrderMapper orderMapper;
     private final CurrentUserUtil currentUserUtil;
+    private final PaymentRepository paymentRepository;
 
     @Override
     @Transactional
@@ -104,8 +109,37 @@ public class OrderServiceImpl implements OrderService {
             productVariantRepository.save(variant);
         });
 
-        // Process payment via Strategy pattern
-        PaymentResponse paymentResponse = paymentService.createPayment(saved, request.getPaymentMethod());
+        PaymentResponse paymentResponse;
+
+        if (request.getPaymentMethod() == PaymentMethod.CASH_ON_DELIVERY) {
+
+            Payment payment = Payment.builder()
+                    .order(saved)
+                    .paymentMethod(PaymentMethod.CASH_ON_DELIVERY)
+                    .status(PaymentStatus.PENDING)
+                    .amount(saved.getTotalAmount())
+                    .transactionRef("COD-" + System.currentTimeMillis())
+                    .build();
+
+            payment = paymentRepository.save(payment);
+
+            paymentResponse = PaymentResponse.builder()
+                    .id(payment.getId())
+                    .orderId(saved.getId())
+                    .paymentMethod(payment.getPaymentMethod())
+                    .status(payment.getStatus())
+                    .amount(payment.getAmount())
+                    .transactionRef(payment.getTransactionRef())
+                    .createdAt(payment.getCreatedAt())
+                    .build();
+
+        } else {
+
+            paymentResponse = paymentService.createPayment(
+                    saved,
+                    request.getPaymentMethod()
+            );
+        }
 
         // Clear cart
         cart.getItems().clear();
@@ -187,5 +221,9 @@ public class OrderServiceImpl implements OrderService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return auth != null && auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+
     }
 }
+
+
