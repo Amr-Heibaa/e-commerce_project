@@ -27,13 +27,18 @@ public class ProductServiceImpl implements ProductService {
     private final ProductImageRepository productImageRepository;   // ← added
     private final ProductMapper productMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository,
-                              CategoryRepository categoryRepository,
-                              ProductImageRepository productImageRepository) {
+
+
+    public ProductServiceImpl(
+            ProductRepository productRepository,
+            CategoryRepository categoryRepository,
+            ProductImageRepository productImageRepository,
+            ProductMapper productMapper
+    ) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.productImageRepository = productImageRepository;
-        this.productMapper = new ProductMapper();
+        this.productMapper = productMapper;
     }
 
     // ----------------------------------------------------------------
