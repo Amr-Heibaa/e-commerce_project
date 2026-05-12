@@ -4,33 +4,30 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Product Details | Perfume Store</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/css/style.css" />
+
     <style>
-        /* ── Animations ── */
-        @keyframes fadeUp   { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
-        @keyframes shimmer  { to   { background-position: -200% 0; } }
-        @keyframes spin     { to   { transform: rotate(360deg); } }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+        @keyframes shimmer { to { background-position:-200% 0; } }
+        @keyframes spin { to { transform:rotate(360deg); } }
 
-        .fade-up  { animation: fadeUp  .55s cubic-bezier(.22,1,.36,1) both; }
-        .fade-in  { animation: fadeIn  .4s ease both; }
+        .fade-up { animation: fadeUp .55s cubic-bezier(.22,1,.36,1) both; }
+        .fade-in { animation: fadeIn .4s ease both; }
 
-        /* ── Skeleton ── */
         .skeleton {
-            background: linear-gradient(90deg,
-            rgba(255,255,255,.04) 25%,
-            rgba(255,255,255,.09) 50%,
-            rgba(255,255,255,.04) 75%);
+            background: linear-gradient(90deg, rgba(255,255,255,.04) 25%, rgba(255,255,255,.09) 50%, rgba(255,255,255,.04) 75%);
             background-size: 200% 100%;
             animation: shimmer 1.6s infinite;
             border-radius: 12px;
         }
 
-        /* ── Main image ── */
         #mainProductImg {
             width: 100%;
             max-height: 560px;
@@ -38,9 +35,12 @@
             border-radius: 18px;
             transition: opacity .35s ease, transform .4s ease;
         }
-        #mainProductImg.switching { opacity: 0; transform: scale(.98); }
 
-        /* ── Thumbnails ── */
+        #mainProductImg.switching {
+            opacity: 0;
+            transform: scale(.98);
+        }
+
         .thumb-img {
             width: 100%;
             height: 88px;
@@ -51,10 +51,19 @@
             transition: border-color .2s, transform .2s, opacity .2s;
             opacity: .7;
         }
-        .thumb-img:hover { border-color: rgba(212,175,55,.5); transform: scale(1.03); opacity: 1; }
-        .thumb-img.active { border-color: rgba(212,175,55,.75); opacity: 1; box-shadow: 0 0 0 2px rgba(212,175,55,.2); }
 
-        /* ── Variants ── */
+        .thumb-img:hover {
+            border-color: rgba(212,175,55,.5);
+            transform: scale(1.03);
+            opacity: 1;
+        }
+
+        .thumb-img.active {
+            border-color: rgba(212,175,55,.75);
+            opacity: 1;
+            box-shadow: 0 0 0 2px rgba(212,175,55,.2);
+        }
+
         .variant-label {
             display: flex;
             justify-content: space-between;
@@ -66,12 +75,26 @@
             transition: background .2s, border-color .2s, transform .15s;
             user-select: none;
         }
-        .variant-label:hover:not(.disabled) { background: rgba(212,175,55,.06); transform: translateX(2px); }
-        .variant-label.selected { background: rgba(212,175,55,.1); border-color: rgba(212,175,55,.6); }
-        .variant-label.disabled { opacity: .45; cursor: not-allowed; }
-        .variant-label input[type="radio"] { display: none; }
 
-        /* ── Quantity ── */
+        .variant-label:hover:not(.disabled) {
+            background: rgba(212,175,55,.06);
+            transform: translateX(2px);
+        }
+
+        .variant-label.selected {
+            background: rgba(212,175,55,.1);
+            border-color: rgba(212,175,55,.6);
+        }
+
+        .variant-label.disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+
+        .variant-label input[type="radio"] {
+            display: none;
+        }
+
         .qty-wrap {
             display: flex;
             align-items: center;
@@ -80,6 +103,7 @@
             overflow: hidden;
             height: 44px;
         }
+
         .qty-btn {
             width: 44px;
             height: 100%;
@@ -90,8 +114,12 @@
             font-size: 1.15rem;
             transition: background .2s, color .2s;
         }
-        .qty-btn:hover { background: rgba(212,175,55,.1); color: #d4af37; }
-        .qty-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+        .qty-btn:hover {
+            background: rgba(212,175,55,.1);
+            color: #d4af37;
+        }
+
         .qty-display {
             min-width: 48px;
             text-align: center;
@@ -106,7 +134,6 @@
             justify-content: center;
         }
 
-        /* ── Notes/tags ── */
         .note-tag {
             display: inline-block;
             padding: 5px 13px;
@@ -118,11 +145,12 @@
             background: rgba(212,175,55,.06);
         }
 
-        /* ── Sticky mobile CTA ── */
         #stickyCTA {
             display: none;
             position: fixed;
-            bottom: 0; left: 0; right: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
             background: rgba(9,9,9,.95);
             backdrop-filter: blur(16px);
             border-top: 1px solid rgba(212,175,55,.2);
@@ -131,12 +159,17 @@
             gap: 12px;
             align-items: center;
         }
-        @media (max-width: 768px) { #stickyCTA { display: flex; } }
 
-        /* ── Review modal ── */
+        @media (max-width: 768px) {
+            #stickyCTA {
+                display: flex;
+            }
+        }
+
         #review-modal {
             display: none;
-            position: fixed; inset: 0;
+            position: fixed;
+            inset: 0;
             background: rgba(0,0,0,.78);
             backdrop-filter: blur(6px);
             align-items: center;
@@ -144,22 +177,39 @@
             z-index: 2000;
             padding: 16px;
         }
-        #review-modal.show { display: flex; }
+
+        #review-modal.show {
+            display: flex;
+        }
+
         #review-modal .modal-inner {
             animation: fadeUp .3s cubic-bezier(.22,1,.36,1) both;
         }
 
-        /* ── Stars ── */
-        .star-btn  { font-size: 1.6rem; cursor: pointer; transition: transform .15s, color .15s; background: none; border: none; padding: 0 3px; }
-        .star-btn:hover { transform: scale(1.2); }
-        .star-on  { color: #f5c842; }
-        .star-off { color: #374151; }
-        .star-display { color: #f5c842; font-size: .95rem; }
-        .star-empty   { color: #374151; font-size: .95rem; }
+        .star-btn {
+            font-size: 1.6rem;
+            cursor: pointer;
+            transition: transform .15s, color .15s;
+            background: none;
+            border: none;
+            padding: 0 3px;
+        }
 
-        /* ── Spinner ── */
+        .star-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .star-on {
+            color: #f5c842;
+        }
+
+        .star-off {
+            color: #374151;
+        }
+
         .spinner {
-            width: 18px; height: 18px;
+            width: 18px;
+            height: 18px;
             border: 2px solid rgba(0,0,0,.3);
             border-top-color: #000;
             border-radius: 50%;
@@ -168,15 +218,18 @@
             vertical-align: middle;
         }
 
-        /* ── Loading overlay ── */
         #detailsLoader {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 56px;
         }
-        @media (max-width: 1023px) { #detailsLoader { grid-template-columns: 1fr; } }
 
-        /* ── Fragrance badge ── */
+        @media (max-width: 1023px) {
+            #detailsLoader {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .family-badge {
             display: inline-flex;
             align-items: center;
@@ -192,22 +245,21 @@
             margin-bottom: 16px;
         }
 
-        /* ── Review card ── */
-        .review-card { transition: transform .2s; }
-        .review-card:hover { transform: translateY(-2px); }
+        .font-serif, h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
 
-        /* Fix font-serif → Playfair */
-        .font-serif, h1, h2, h3 { font-family: 'Playfair Display', serif; }
-        body { font-family: 'Inter', sans-serif; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
     </style>
 </head>
+
 <body class="bg-black text-white min-h-screen flex flex-col">
 
 <main class="flex-1 max-w-7xl mx-auto px-6 py-14 w-full pb-28 md:pb-14">
 
-    <!-- ── Product section ── -->
     <section id="productDetails" class="fade-up mb-24">
-        <!-- Skeleton shown while loading -->
         <div id="detailsLoader">
             <div>
                 <div class="skeleton rounded-3xl mb-4" style="height:480px;"></div>
@@ -228,24 +280,21 @@
                 <div class="skeleton" style="height:52px;border-radius:14px;"></div>
             </div>
         </div>
-        <!-- Filled by JS -->
+
         <div id="detailsContent" style="display:none;"></div>
     </section>
 
-    <!-- ── Reviews section ── -->
     <section class="fade-up" style="animation-delay:.15s">
         <div class="flex flex-wrap items-center justify-between gap-4 mb-10">
             <div>
                 <p class="gold-text uppercase tracking-[0.35em] text-xs mb-2">Customer Feedback</p>
                 <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);">Reviews</h2>
             </div>
-            <button
-                    onclick="openReviewModal()"
-                    class="gold-btn rounded-xl px-6 py-3 text-sm"
-                    aria-label="Write a review">
+            <button onclick="openReviewModal()" class="gold-btn rounded-xl px-6 py-3 text-sm">
                 Write a Review
             </button>
         </div>
+
         <div id="reviews-list" class="space-y-5">
             <div class="glass-card rounded-3xl p-8 text-center">
                 <p class="text-gray-500 text-sm">Loading reviews…</p>
@@ -254,37 +303,29 @@
     </section>
 </main>
 
-<!-- ── Sticky mobile Add to Cart ── -->
-<div id="stickyCTA" aria-hidden="true">
+<div id="stickyCTA">
     <div class="qty-wrap" style="flex-shrink:0;">
-        <button class="qty-btn" onclick="adjustQty(-1)" aria-label="Decrease quantity">−</button>
+        <button class="qty-btn" onclick="adjustQty(-1)">−</button>
         <div class="qty-display" id="qtyDisplaySticky">1</div>
-        <button class="qty-btn" onclick="adjustQty(1)" aria-label="Increase quantity">+</button>
+        <button class="qty-btn" onclick="adjustQty(1)">+</button>
     </div>
     <button onclick="addToCartAndShowDrawer()" class="gold-btn rounded-xl py-3 flex-1 text-sm text-center">
         Add to Cart
     </button>
 </div>
 
-<!-- ── Review modal ── -->
-<div
-        id="review-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-title"
-        onclick="handleModalBackdrop(event)">
+<div id="review-modal" role="dialog" aria-modal="true" onclick="handleModalBackdrop(event)">
     <div class="glass-card rounded-3xl p-8 w-full max-w-xl relative modal-inner">
-        <button
-                onclick="closeReviewModal()"
-                class="absolute top-5 right-5 text-gray-400 hover:text-white text-xl transition-colors"
-                aria-label="Close modal">✕</button>
+        <button onclick="closeReviewModal()" class="absolute top-5 right-5 text-gray-400 hover:text-white text-xl">
+            ✕
+        </button>
 
         <p class="gold-text uppercase tracking-[0.3em] text-xs mb-2">Share Your Experience</p>
-        <h3 id="modal-title" class="text-3xl mb-8">Add Review</h3>
+        <h3 class="text-3xl mb-8">Add Review</h3>
 
         <div class="mb-6">
             <label class="block mb-3 text-xs text-gray-400 uppercase tracking-widest">Rating</label>
-            <div id="rating-stars" role="group" aria-label="Star rating" class="flex gap-1"></div>
+            <div id="rating-stars" class="flex gap-1"></div>
             <input type="hidden" id="rating-value" value="0" />
         </div>
 
@@ -299,43 +340,38 @@
             <p id="charCount" class="text-right text-xs text-gray-600 mt-1">0 / 1000</p>
         </div>
 
-        <button
-                id="submit-review-btn"
-                onclick="submitReview()"
-                class="gold-btn rounded-xl px-6 py-3 w-full text-sm">
+        <button id="submit-review-btn" onclick="submitReview()" class="gold-btn rounded-xl px-6 py-3 w-full text-sm">
             Submit Review
         </button>
     </div>
 </div>
 
-<!-- ── Scripts ── -->
 <script src="/js/api.js"></script>
 <script src="/js/load-common.js"></script>
 <script src="/js/products.js"></script>
 <script src="/js/cart.js"></script>
 <script src="/js/reviews.js"></script>
+
 <script>
     (() => {
         'use strict';
 
-        /* ─────────────────────────────
-           State
-        ───────────────────────────── */
-        let _qty          = 1;
-        let _maxStock     = 999;
-        let _productId    = null;
+        let _qty = 1;
+        let _maxStock = 999;
+        let _productId = null;
 
-        /* ─────────────────────────────
-           Bootstrap
-        ───────────────────────────── */
-        renderAuthLinks();
+        if (typeof renderAuthLinks === 'function') {
+            renderAuthLinks();
+        }
 
         const params = new URLSearchParams(window.location.search);
         _productId = params.get('id');
 
         if (_productId) {
             loadProductDetails(_productId);
-            loadReviews(_productId);
+            if (typeof loadReviews === 'function') {
+                loadReviews(_productId);
+            }
         } else {
             showError('No product ID specified.');
         }
@@ -344,134 +380,140 @@
         initCharCounter();
         trapModalFocus();
 
-        /* ─────────────────────────────
-           Load product details
-        ───────────────────────────── */
         async function loadProductDetails(id) {
             try {
-                const product  = await api.get(`/products/${id}`);
-                const images   = product.images   || [];
+                const product = await api.get(`/products/${id}`);
+                const images = product.images || [];
                 const variants = (product.variants || []).filter(v => v.active !== false);
 
-                const primary  = images.find(i => i.isPrimary) || images[0];
-                const mainSrc  = primary?.imageUrl || '/images/products/default-perfume.png';
-
+                const primary = images.find(i => i.isPrimary) || images[0];
+                const mainSrc = primary?.imageUrl || '/images/products/default-perfume.png';
                 const familyLabel = formatFamily(product.fragranceFamily);
 
-                /* ── Determine default variant (first in-stock) ── */
-                const defaultIdx = variants.findIndex(v => v.stockQuantity > 0);
-                const activeIdx  = defaultIdx >= 0 ? defaultIdx : 0;
+                const defaultIdx = variants.findIndex(v => Number(v.stockQuantity || 0) > 0);
+                const activeIdx = defaultIdx >= 0 ? defaultIdx : 0;
 
                 if (variants[activeIdx]) {
-                    _maxStock = variants[activeIdx].stockQuantity;
+                    _maxStock = Number(variants[activeIdx].stockQuantity || 0) || 1;
                 }
 
-                /* ── Build HTML ── */
                 document.getElementById('detailsContent').innerHTML = `
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 items-start">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 items-start">
+                        <div>
+                            <div class="glass-card rounded-3xl p-4 mb-4" style="overflow:hidden;">
+                                <img
+                                    id="mainProductImg"
+                                    src="${esc(mainSrc)}"
+                                    alt="${esc(product.name)}"
+                                    onerror="this.src='/images/products/default-perfume.png'" />
+                            </div>
 
-                    <!-- Gallery -->
-                    <div>
-                        <div class="glass-card rounded-3xl p-4 mb-4" style="overflow:hidden;">
-                            <img id="mainProductImg"
-                                src="${esc(mainSrc)}"
-                                alt="${esc(product.name)}"
-                                onerror="this.src='/images/products/default-perfume.png'" />
+                            ${images.length > 1 ? `
+                                <div class="grid grid-cols-4 gap-3">
+                                    ${images.map((img, i) => `
+                                        <img
+                                            src="${esc(img.imageUrl)}"
+                                            class="thumb-img ${i === 0 ? 'active' : ''}"
+                                            alt="View ${i + 1}"
+                                            onclick="switchImg(this, '${esc(img.imageUrl)}')"
+                                            onerror="this.remove()" />
+                                    `).join('')}
+                                </div>
+                            ` : ''}
                         </div>
-                        ${images.length > 1 ? `
-                        <div class="grid grid-cols-4 gap-3" role="list" aria-label="Product images">
-                            ${images.map((img, i) => `
-                            <img
-                                src="${esc(img.imageUrl)}"
-                                class="thumb-img ${i === 0 ? 'active' : ''}"
-                                alt="View ${i + 1}"
-                                role="listitem"
-                                tabindex="0"
-                                onclick="switchImg(this, '${esc(img.imageUrl)}')"
-                                onkeydown="if(event.key==='Enter'||event.key===' ')switchImg(this,'${esc(img.imageUrl)}')"
-                                onerror="this.closest('[role=listitem]')&&this.remove()||this.remove()" />`).join('')}
-                        </div>` : ''}
-                    </div>
 
-                    <!-- Info -->
-                    <div class="pt-2">
-                        <div class="family-badge">
-                            <span>⟡</span>${esc(familyLabel)}
-                        </div>
-                        <h1 style="font-size:clamp(2rem,5vw,3.5rem);line-height:1.1;margin-bottom:20px;">
-                            ${esc(product.name)}
-                        </h1>
+                        <div class="pt-2">
+                            <div class="family-badge">
+                                <span>⟡</span>${esc(familyLabel)}
+                            </div>
 
-                        ${product.description ? `
-                        <p class="text-gray-400 leading-8 mb-8 text-sm" style="max-width:52ch;">
-                            ${esc(product.description)}
-                        </p>` : ''}
+                            <h1 style="font-size:clamp(2rem,5vw,3.5rem);line-height:1.1;margin-bottom:20px;">
+                                ${esc(product.name)}
+                            </h1>
 
-                        ${product.notes?.length ? `
-                        <div class="flex flex-wrap gap-2 mb-8">
-                            ${product.notes.map(n => `<span class="note-tag">${esc(n)}</span>`).join('')}
-                        </div>` : ''}
+                            ${product.description ? `
+                                <p class="text-gray-400 leading-8 mb-8 text-sm" style="max-width:52ch;">
+                                    ${esc(product.description)}
+                                </p>
+                            ` : ''}
 
-                        <!-- Variants -->
-                        ${variants.length ? `
-                        <div class="glass-card rounded-3xl p-6 mb-8">
-                            <h2 class="text-base gold-text mb-4 uppercase tracking-widest" style="font-size:.7rem;">Choose Size</h2>
-                            <div class="space-y-3" role="radiogroup" aria-label="Product sizes">
-                                ${variants.map((v, i) => {
-                    const inStock   = v.stockQuantity > 0;
+                            ${product.notes?.length ? `
+                                <div class="flex flex-wrap gap-2 mb-8">
+                                    ${product.notes.map(n => `<span class="note-tag">${esc(n)}</span>`).join('')}
+                                </div>
+                            ` : ''}
+
+                            ${variants.length ? `
+                                <div class="glass-card rounded-3xl p-6 mb-8">
+                                    <h2 class="text-base gold-text mb-4 uppercase tracking-widest" style="font-size:.7rem;">
+                                        Choose Size
+                                    </h2>
+
+                                    <div class="space-y-3" role="radiogroup" aria-label="Product sizes">
+                                        ${variants.map((v, i) => {
+                    const stock = Number(v.stockQuantity || 0);
+                    const inStock = stock > 0;
                     const isDefault = i === activeIdx;
+
                     return `
-                                    <label class="variant-label ${isDefault ? 'selected' : ''} ${!inStock ? 'disabled' : ''}"
-                                        data-stock="${v.stockQuantity}">
-                                        <div class="flex items-center gap-3">
-                                            <input
-                                                type="radio"
-                                                name="variantId"
-                                                value="${v.id}"
-                                                ${isDefault ? 'checked' : ''}
-                                                ${!inStock ? 'disabled' : ''}
-                                                onchange="onVariantChange(this)"
-                                                aria-label="${esc(v.size)} — $${Number(v.price || 0).toFixed(2)}" />
-                                            <span class="font-medium text-sm">${esc(v.size)}</span>
-                                        </div>
-                                        <div class="text-right">
-                                            <div class="gold-text font-semibold">$${Number(v.price || 0).toFixed(2)}</div>
-                                            <div class="text-xs mt-1 ${inStock ? 'text-green-400' : 'text-red-400'}">
-                                                ${inStock ? `${v.stockQuantity} in stock` : 'Out of stock'}
-                                            </div>
-                                        </div>
-                                    </label>`;
+                                                <label class="variant-label ${isDefault ? 'selected' : ''} ${!inStock ? 'disabled' : ''}"
+                                                       data-stock="${stock}">
+                                                    <div class="flex items-center gap-3">
+                                                        <input
+                                                            type="radio"
+                                                            name="variantId"
+                                                            value="${v.id}"
+                                                            ${isDefault ? 'checked' : ''}
+                                                            ${!inStock ? 'disabled' : ''}
+                                                            onchange="onVariantChange(this)" />
+                                                        <span class="font-medium text-sm">${esc(v.size)}</span>
+                                                    </div>
+
+                                                    <div class="text-right">
+                                                        <div class="gold-text font-semibold">
+                                                            $${Number(v.price || 0).toFixed(2)}
+                                                        </div>
+                                                        <div class="text-xs mt-1 ${inStock ? 'text-green-400' : 'text-red-400'}">
+                                                            ${inStock ? `${stock} in stock` : 'Out of stock'}
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            `;
                 }).join('')}
-                            </div>
-                        </div>` : ''}
+                                    </div>
+                                </div>
+                            ` : `
+                                <div class="glass-card rounded-3xl p-6 mb-8">
+                                    <p class="text-red-300 text-sm">No available sizes for this product.</p>
+                                </div>
+                            `}
 
-                        <!-- Qty + CTA (desktop) -->
-                        <div class="flex items-center gap-4 mb-8 flex-wrap">
-                            <div class="qty-wrap">
-                                <button class="qty-btn" onclick="adjustQty(-1)" aria-label="Decrease quantity">−</button>
-                                <div class="qty-display" id="qtyDisplay">1</div>
-                                <button class="qty-btn" onclick="adjustQty(1)" aria-label="Increase quantity">+</button>
+                            <div class="flex items-center gap-4 mb-8 flex-wrap">
+                                <div class="qty-wrap">
+                                    <button class="qty-btn" onclick="adjustQty(-1)">−</button>
+                                    <div class="qty-display" id="qtyDisplay">1</div>
+                                    <button class="qty-btn" onclick="adjustQty(1)">+</button>
+                                </div>
+
+                                <input type="hidden" id="quantityInput" value="1" />
+
+                                <button
+                                    onclick="addToCartAndShowDrawer()"
+                                    class="gold-btn rounded-xl px-8 py-3 flex-1 text-sm"
+                                    style="min-width:180px;">
+                                    Add to Cart
+                                </button>
                             </div>
-                            <input type="hidden" id="quantityInput" value="1" />
-                            <button
-                                onclick="addToCartAndShowDrawer()"
-                                class="gold-btn rounded-xl px-8 py-3 flex-1 text-sm"
-                                style="min-width:180px;">
-                                Add to Cart
-                            </button>
+
+                            <a href="/products.html" class="text-gray-600 hover:text-yellow-400 transition-colors text-xs uppercase tracking-widest">
+                                ← Back to collection
+                            </a>
                         </div>
-
-                        <a href="/products.html" class="text-gray-600 hover:text-yellow-400 transition-colors text-xs uppercase tracking-widest">
-                            ← Back to collection
-                        </a>
                     </div>
-                </div>`;
+                `;
 
-                /* swap loader → content */
-                document.getElementById('detailsLoader').style.display  = 'none';
+                document.getElementById('detailsLoader').style.display = 'none';
                 document.getElementById('detailsContent').style.display = 'block';
-
-                /* update page title */
                 document.title = `${product.name} | Perfume Store`;
 
             } catch (err) {
@@ -479,84 +521,105 @@
             }
         }
 
-        /* ─────────────────────────────
-           Image switcher
-        ───────────────────────────── */
         window.switchImg = function(el, src) {
             const main = document.getElementById('mainProductImg');
             if (!main) return;
+
             main.classList.add('switching');
+
             setTimeout(() => {
                 main.src = src;
                 main.onload = () => main.classList.remove('switching');
             }, 200);
+
             document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
         };
 
-        /* ─────────────────────────────
-           Quantity
-        ───────────────────────────── */
         window.adjustQty = function(delta) {
             _qty = Math.min(_maxStock, Math.max(1, _qty + delta));
+
             ['qtyDisplay', 'qtyDisplaySticky'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.textContent = _qty;
             });
+
             const hidden = document.getElementById('quantityInput');
             if (hidden) hidden.value = _qty;
         };
 
-        /* ─────────────────────────────
-           Variant change
-        ───────────────────────────── */
         window.onVariantChange = function(radio) {
-            document.querySelectorAll('.variant-label').forEach(l => l.classList.remove('selected'));
+            document.querySelectorAll('.variant-label').forEach(label => label.classList.remove('selected'));
+
             const label = radio.closest('.variant-label');
-            if (label) {
-                label.classList.add('selected');
-                _maxStock = parseInt(label.dataset.stock, 10) || 999;
-                /* clamp qty if needed */
-                if (_qty > _maxStock) adjustQty(0);
+            if (!label) return;
+
+            label.classList.add('selected');
+
+            _maxStock = Number(label.dataset.stock || 1) || 1;
+
+            if (_qty > _maxStock) {
+                _qty = _maxStock;
+                adjustQty(0);
             }
         };
 
-        /* ─────────────────────────────
-           Add to cart
-        ───────────────────────────── */
         window.addToCartAndShowDrawer = async function() {
-            if (!api.isLoggedIn()) { window.location.href = '/login.html'; return; }
+            if (!api.isLoggedIn()) {
+                window.location.href = '/login.html';
+                return;
+            }
 
             const variantInput = document.querySelector('input[name="variantId"]:checked');
-            if (!variantInput) { showToast('Please choose a size first.', 'warn'); return; }
+
+            if (!variantInput) {
+                showToast('Please choose a size first.', 'warn');
+                return;
+            }
+
+            const quantity = Number(document.getElementById('quantityInput')?.value || _qty || 1);
 
             const btns = document.querySelectorAll('button[onclick="addToCartAndShowDrawer()"]');
-            btns.forEach(b => {
-                b.disabled = true;
-                b.innerHTML = '<span class="spinner"></span>';
+
+            btns.forEach(btn => {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner"></span>';
             });
 
             try {
                 await api.post('/cart/items', {
-                    variantId : Number(variantInput.value),
-                    quantity  : Number(document.getElementById('quantityInput')?.value || 1),
+                    variantId: Number(variantInput.value),
+                    quantity: quantity
                 });
-                await openCartDrawer();
-                updateCartBadge();
+
+                if (typeof showAddedToCart === 'function') {
+                    await showAddedToCart();
+                } else if (typeof openCartDrawer === 'function') {
+                    await openCartDrawer();
+                }
+
+                if (typeof updateCartBadge === 'function') {
+                    updateCartBadge();
+                }
+
+                showToast('Product added to cart.', 'success');
+
             } catch (e) {
                 showToast(e.message || 'Could not add to cart.', 'error');
             } finally {
-                btns.forEach(b => {
-                    b.disabled = false;
-                    b.textContent = 'Add to Cart';
+                btns.forEach(btn => {
+                    btn.disabled = false;
+                    btn.textContent = 'Add to Cart';
                 });
             }
         };
 
-        /* ─────────────────────────────
-           Review modal
-        ───────────────────────────── */
         window.openReviewModal = function() {
+            if (!api.isLoggedIn()) {
+                window.location.href = '/login.html';
+                return;
+            }
+
             const modal = document.getElementById('review-modal');
             modal.classList.add('show');
             modal.querySelector('textarea')?.focus();
@@ -567,55 +630,63 @@
         };
 
         window.handleModalBackdrop = function(e) {
-            if (e.target === document.getElementById('review-modal')) closeReviewModal();
+            if (e.target === document.getElementById('review-modal')) {
+                closeReviewModal();
+            }
         };
 
-        /* Close on ESC */
         document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') closeReviewModal();
+            if (e.key === 'Escape') {
+                closeReviewModal();
+            }
         });
 
         function trapModalFocus() {
             const modal = document.getElementById('review-modal');
+
             modal.addEventListener('keydown', e => {
                 if (e.key !== 'Tab') return;
+
                 const focusable = [...modal.querySelectorAll('button, textarea, input, [tabindex]:not([tabindex="-1"])')];
-                const first = focusable[0], last = focusable[focusable.length - 1];
-                if (e.shiftKey ? document.activeElement === first : document.activeElement === last) {
+                if (!focusable.length) return;
+
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+
+                if (e.shiftKey && document.activeElement === first) {
                     e.preventDefault();
-                    (e.shiftKey ? last : first).focus();
+                    last.focus();
+                } else if (!e.shiftKey && document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
                 }
             });
         }
 
-        /* ─────────────────────────────
-           Star rating
-        ───────────────────────────── */
         function initRatingStars() {
             const container = document.getElementById('rating-stars');
             if (!container) return;
-            let hovered = 0;
 
             for (let i = 1; i <= 5; i++) {
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = 'star-btn star-off';
                 btn.textContent = '★';
-                btn.setAttribute('aria-label', `${i} star${i > 1 ? 's' : ''}`);
                 btn.dataset.val = i;
 
-                btn.addEventListener('mouseenter', () => { hovered = i; paintStars(i); });
-                btn.addEventListener('mouseleave', () => { paintStars(getCurrentRating()); });
+                btn.addEventListener('mouseenter', () => paintStars(i));
+                btn.addEventListener('mouseleave', () => paintStars(getCurrentRating()));
                 btn.addEventListener('click', () => {
                     document.getElementById('rating-value').value = i;
                     paintStars(i);
                 });
+
                 container.appendChild(btn);
             }
         }
 
         function getCurrentRating() {
-            return parseInt(document.getElementById('rating-value')?.value || '0', 10);
+            return Number(document.getElementById('rating-value')?.value || 0);
         }
 
         function paintStars(upTo) {
@@ -624,27 +695,36 @@
             });
         }
 
-        /* ─────────────────────────────
-           Char counter
-        ───────────────────────────── */
         function initCharCounter() {
             const ta = document.getElementById('review-comment');
             const ct = document.getElementById('charCount');
+
             if (!ta || !ct) return;
+
             ta.addEventListener('input', () => {
                 ct.textContent = `${ta.value.length} / 1000`;
             });
         }
 
-        /* ─────────────────────────────
-           Submit review (delegates to reviews.js)
-        ───────────────────────────── */
         window.submitReview = async function() {
-            const rating  = parseInt(document.getElementById('rating-value')?.value || '0', 10);
+            const rating = Number(document.getElementById('rating-value')?.value || 0);
             const comment = document.getElementById('review-comment')?.value?.trim();
 
-            if (!rating)   { showToast('Please select a star rating.', 'warn'); return; }
-            if (!comment)  { showToast('Please write a comment.', 'warn'); return; }
+            if (!api.isLoggedIn()) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            if (!rating) {
+                showToast('Please select a star rating.', 'warn');
+                return;
+            }
+
+            if (!comment) {
+                showToast('Please write a comment.', 'warn');
+                return;
+            }
+
             if (!_productId) return;
 
             const btn = document.getElementById('submit-review-btn');
@@ -652,20 +732,30 @@
             btn.innerHTML = '<span class="spinner"></span> Submitting…';
 
             try {
-                /* reviews.js is expected to expose submitReviewData or similar;
-                   fall back to direct api call if not */
                 if (typeof window._submitReviewData === 'function') {
                     await window._submitReviewData(_productId, rating, comment);
                 } else {
-                    await api.post(`/products/${_productId}/reviews`, { rating, comment });
+                    await api.post('/reviews', {
+                        productId: Number(_productId),
+                        rating,
+                        comment
+                    });
                 }
+
                 closeReviewModal();
+
                 document.getElementById('review-comment').value = '';
                 document.getElementById('rating-value').value = '0';
                 document.getElementById('charCount').textContent = '0 / 1000';
+
                 paintStars(0);
-                loadReviews(_productId);
+
+                if (typeof loadReviews === 'function') {
+                    loadReviews(_productId);
+                }
+
                 showToast('Review submitted — thank you!', 'success');
+
             } catch (e) {
                 showToast(e.message || 'Could not submit review.', 'error');
             } finally {
@@ -674,62 +764,84 @@
             }
         };
 
-        /* ─────────────────────────────
-           Helpers
-        ───────────────────────────── */
         function showError(msg) {
             document.getElementById('detailsLoader').style.display = 'none';
             document.getElementById('detailsContent').style.display = 'block';
+
             document.getElementById('detailsContent').innerHTML = `
-            <div class="glass-card rounded-3xl p-12 text-center max-w-lg mx-auto">
-                <p style="font-size:3rem;margin-bottom:16px;">⚠️</p>
-                <h2 class="text-2xl mb-4">Product Not Found</h2>
-                <p class="text-gray-400 text-sm mb-8">${esc(msg)}</p>
-                <a href="/products.html" class="gold-btn rounded-xl px-6 py-3 text-sm">
-                    Browse Collection
-                </a>
-            </div>`;
+                <div class="glass-card rounded-3xl p-12 text-center max-w-lg mx-auto">
+                    <p style="font-size:3rem;margin-bottom:16px;">⚠️</p>
+                    <h2 class="text-2xl mb-4">Product Not Found</h2>
+                    <p class="text-gray-400 text-sm mb-8">${esc(msg)}</p>
+                    <a href="/products.html" class="gold-btn rounded-xl px-6 py-3 text-sm">
+                        Browse Collection
+                    </a>
+                </div>
+            `;
         }
 
         function esc(str) {
             if (str == null) return '';
+
             return String(str)
-                .replace(/&/g,'&amp;')
-                .replace(/</g,'&lt;')
-                .replace(/>/g,'&gt;')
-                .replace(/"/g,'&quot;')
-                .replace(/'/g,'&#39;');
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         }
 
         function formatFamily(raw) {
             if (!raw) return 'Luxury';
-            return raw.replace(/_/g, ' ')
+
+            return String(raw)
+                .replace(/_/g, ' ')
                 .toLowerCase()
                 .replace(/\b\w/g, c => c.toUpperCase());
         }
 
-        /* Lightweight toast (if your app doesn't have one) */
         function showToast(msg, type = 'info') {
-            const colors = { success:'#4ade80', warn:'#facc15', error:'#f87171', info:'#93c5fd' };
-            const toast  = document.createElement('div');
+            const colors = {
+                success: '#4ade80',
+                warn: '#facc15',
+                error: '#f87171',
+                info: '#93c5fd'
+            };
+
+            const toast = document.createElement('div');
+
             Object.assign(toast.style, {
-                position:'fixed', bottom:'80px', left:'50%', transform:'translateX(-50%)',
-                background:'#111', border:`1px solid ${colors[type]||colors.info}`,
-                color:'#fff', padding:'12px 22px', borderRadius:'12px',
-                fontSize:'.85rem', zIndex:'9999', whiteSpace:'nowrap',
-                boxShadow:'0 8px 30px rgba(0,0,0,.5)', opacity:'0',
-                transition:'opacity .3s',
+                position: 'fixed',
+                bottom: '80px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: '#111',
+                border: `1px solid ${colors[type] || colors.info}`,
+                color: '#fff',
+                padding: '12px 22px',
+                borderRadius: '12px',
+                fontSize: '.85rem',
+                zIndex: '9999',
+                whiteSpace: 'nowrap',
+                boxShadow: '0 8px 30px rgba(0,0,0,.5)',
+                opacity: '0',
+                transition: 'opacity .3s'
             });
+
             toast.textContent = msg;
             document.body.appendChild(toast);
-            requestAnimationFrame(() => toast.style.opacity = '1');
+
+            requestAnimationFrame(() => {
+                toast.style.opacity = '1';
+            });
+
             setTimeout(() => {
                 toast.style.opacity = '0';
                 setTimeout(() => toast.remove(), 350);
             }, 3000);
         }
-
     })();
 </script>
+
 </body>
 </html>

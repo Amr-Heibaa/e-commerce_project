@@ -17,4 +17,6 @@ public class ProductResponse {
     private Long categoryId;
     private ProductImageResponse primaryImage;           // ← added
     private List<ProductImageResponse> images;          // ← added
+    private List<ProductVariantResponse> variants;
+
 }

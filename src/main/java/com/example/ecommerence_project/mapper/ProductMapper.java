@@ -7,6 +7,7 @@ import com.example.ecommerence_project.dto.response.ProductResponse;
 import com.example.ecommerence_project.entity.Category;
 import com.example.ecommerence_project.entity.Product;
 import com.example.ecommerence_project.entity.ProductImage;
+import com.example.ecommerence_project.dto.response.ProductVariantResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -27,6 +28,7 @@ public class ProductMapper {
     }
 
     public ProductResponse toResponse(Product product) {
+
         ProductResponse response = new ProductResponse();
 
         response.setId(product.getId());
@@ -39,8 +41,9 @@ public class ProductMapper {
             response.setCategoryId(product.getCategory().getId());
         }
 
-        // map images
+        // IMAGES
         if (product.getImages() != null) {
+
             List<ProductImageResponse> imageResponses = product.getImages()
                     .stream()
                     .map(this::imageToResponse)
@@ -51,9 +54,30 @@ public class ProductMapper {
             product.getImages().stream()
                     .filter(img -> Boolean.TRUE.equals(img.getIsPrimary()))
                     .findFirst()
-                    .ifPresent(img -> response.setPrimaryImage(imageToResponse(img)));
+                    .ifPresent(img ->
+                            response.setPrimaryImage(imageToResponse(img)));
         } else {
             response.setImages(Collections.emptyList());
+        }
+
+        // VARIANTS
+        if (product.getVariants() != null) {
+
+            List<ProductVariantResponse> variants = product.getVariants()
+                    .stream()
+                    .map(variant -> ProductVariantResponse.builder()
+                            .id(variant.getId())
+                            .productId(product.getId())
+                            .size(variant.getSize())
+                            .price(variant.getPrice())
+                            .stockQuantity(variant.getStockQuantity())
+                            .active(variant.getActive())
+                            .build())
+                    .collect(Collectors.toList());
+
+            response.setVariants(variants);
+        } else {
+            response.setVariants(Collections.emptyList());
         }
 
         return response;
