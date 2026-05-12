@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Card Payment | Perfume Store</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body class="bg-black text-white min-h-screen flex items-center justify-center px-6">
+
+<div class="glass-card rounded-3xl p-8 w-full max-w-md">
+
+    <p class="gold-text uppercase tracking-[0.3em] text-xs mb-3">
+        Secure Payment
+    </p>
+
+    <h1 class="text-4xl font-serif mb-8">
+        Credit Card
+    </h1>
+
+    <form onsubmit="pay(event)" class="space-y-5">
+
+        <div>
+            <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2">
+                Card Holder
+            </label>
+
+            <input
+                    required
+                    class="w-full bg-black/40 border border-yellow-500/20 rounded-xl px-4 py-3 outline-none"
+                    placeholder="John Doe">
+        </div>
+
+        <div>
+            <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2">
+                Card Number
+            </label>
+
+            <input
+                    required
+                    maxlength="19"
+                    class="w-full bg-black/40 border border-yellow-500/20 rounded-xl px-4 py-3 outline-none"
+                    placeholder="4242 4242 4242 4242">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+
+            <div>
+                <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2">
+                    Expiry
+                </label>
+
+                <input
+                        required
+                        class="w-full bg-black/40 border border-yellow-500/20 rounded-xl px-4 py-3 outline-none"
+                        placeholder="12/28">
+            </div>
+
+            <div>
+                <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2">
+                    CVV
+                </label>
+
+                <input
+                        required
+                        maxlength="4"
+                        class="w-full bg-black/40 border border-yellow-500/20 rounded-xl px-4 py-3 outline-none"
+                        placeholder="123">
+            </div>
+        </div>
+
+        <button
+                id="payBtn"
+                class="gold-btn w-full rounded-2xl py-4 mt-4">
+            Pay Now
+        </button>
+
+    </form>
+
+</div>
+
+<script src="/js/api.js"></script>
+
+<script>
+    async function pay(event) {
+
+        event.preventDefault();
+
+        const btn = document.getElementById('payBtn');
+
+        btn.disabled = true;
+        btn.textContent = 'Processing...';
+
+        try {
+
+            const payload = JSON.parse(
+                localStorage.getItem('pendingCheckout')
+            );
+
+            await api.post('/orders/checkout', payload);
+
+            localStorage.removeItem('pendingCheckout');
+
+            window.location.href = '/my-orders.html';
+
+        } catch (e) {
+
+            alert(e.message);
+
+            btn.disabled = false;
+            btn.textContent = 'Pay Now';
+        }
+    }
+</script>
+
+</body>
+</html>

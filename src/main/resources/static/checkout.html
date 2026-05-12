@@ -46,7 +46,27 @@
             <div class="glass-card rounded-3xl p-7"><h2 class="text-xl font-serif gold-text mb-6">Payment Method</h2>
                 <div class="space-y-3">
                     <label style="display:flex;align-items:center;gap:14px;border:1px solid rgba(202,138,4,.2);border-radius:14px;padding:16px 18px;cursor:pointer;"><input type="radio" name="paymentMethod" value="CASH_ON_DELIVERY" checked class="accent-yellow-500"/><div><p class="font-medium text-sm">Cash on Delivery</p><p class="text-gray-500 text-xs">Pay when your order arrives</p></div><span>💵</span></label>
-                    <label style="display:flex;align-items:center;gap:14px;border:1px solid rgba(202,138,4,.2);border-radius:14px;padding:16px 18px;cursor:pointer;"><input type="radio" name="paymentMethod" value="CREDIT_CARD" class="accent-yellow-500"/><div><p class="font-medium text-sm">Credit Card</p><p class="text-gray-500 text-xs">Visa, Mastercard, Amex</p></div><span>💳</span></label>
+                    <label style="display:flex;align-items:center;gap:14px;border:1px solid rgba(202,138,4,.2);border-radius:14px;padding:16px 18px;cursor:pointer;">
+                        <input type="radio" name="paymentMethod" value="CREDIT_CARD" class="accent-yellow-500"/>
+
+                        <div>
+                            <p class="font-medium text-sm">Credit Card</p>
+                            <p class="text-gray-500 text-xs">Visa, Mastercard, Amex</p>
+                        </div>
+
+                        <span>💳</span>
+                    </label>
+
+                    <label style="display:flex;align-items:center;gap:14px;border:1px solid rgba(202,138,4,.2);border-radius:14px;padding:16px 18px;cursor:pointer;">
+                        <input type="radio" name="paymentMethod" value="DIGITAL_WALLET" class="accent-yellow-500"/>
+
+                        <div>
+                            <p class="font-medium text-sm">Digital Wallet</p>
+                            <p class="text-gray-500 text-xs">Apple Pay, Google Pay, Wallet</p>
+                        </div>
+
+                        <span>📱</span>
+                    </label>
                 </div>
             </div>
             <button type="submit" class="gold-btn w-full rounded-2xl py-4 font-medium" style="font-size:.85rem;letter-spacing:.15em;">Place Order</button>

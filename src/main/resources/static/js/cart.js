@@ -160,8 +160,10 @@ async function loadCheckoutSummary() {
 
 async function placeOrder(event) {
     event.preventDefault();
+
     const form = event.target;
     const message = document.getElementById('checkoutMessage');
+
     const addressPayload = {
         fullName: form.fullName.value.trim(),
         phone: form.phone.value.trim(),
@@ -173,23 +175,55 @@ async function placeOrder(event) {
         country: form.country.value.trim(),
         isDefault: true
     };
+
     try {
+
         const savedAddress = await api.post('/addresses', addressPayload);
+
         const checkoutPayload = {
             addressId: savedAddress.id,
             paymentMethod: form.paymentMethod.value,
             notes: ""
         };
+
+        // SAVE TEMP CHECKOUT DATA
+        localStorage.setItem(
+            'pendingCheckout',
+            JSON.stringify(checkoutPayload)
+        );
+
+        // REDIRECT BASED ON PAYMENT METHOD
+        if (form.paymentMethod.value === 'CREDIT_CARD') {
+            window.location.href = '/payment-card.html';
+            return;
+        }
+
+        if (form.paymentMethod.value === 'DIGITAL_WALLET') {
+            window.location.href = '/payment-wallet.html';
+            return;
+        }
+
+        // CASH ON DELIVERY
         await api.post('/orders/checkout', checkoutPayload);
+
         message.textContent = 'Order placed successfully.';
-        message.className = 'mb-6 rounded-xl px-4 py-3 text-sm bg-green-500/20 border border-green-400/40 text-green-200';
-        if (typeof updateCartBadge === "function") updateCartBadge();
+
+        message.className =
+            'mb-6 rounded-xl px-4 py-3 text-sm bg-green-500/20 border border-green-400/40 text-green-200';
+
+        if (typeof updateCartBadge === "function") {
+            updateCartBadge();
+        }
+
         setTimeout(() => {
             window.location.href = '/my-orders.html';
-        }, 900);
-    } catch (error) {
-        message.textContent = error.message;
-        message.className = 'mb-6 rounded-xl px-4 py-3 text-sm bg-red-500/20 border border-red-400/40 text-red-200';
+        }, 1000);
 
+    } catch (error) {
+
+        message.textContent = error.message;
+
+        message.className =
+            'mb-6 rounded-xl px-4 py-3 text-sm bg-red-500/20 border border-red-400/40 text-red-200';
     }
 }

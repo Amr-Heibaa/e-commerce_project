@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Wallet Payment | Perfume Store</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body class="bg-black text-white min-h-screen flex items-center justify-center px-6">
+
+<div class="glass-card rounded-3xl p-8 w-full max-w-md">
+
+    <p class="gold-text uppercase tracking-[0.3em] text-xs mb-3">
+        Digital Wallet
+    </p>
+
+    <h1 class="text-4xl font-serif mb-8">
+        Mobile Wallet
+    </h1>
+
+    <form onsubmit="payWallet(event)" class="space-y-5">
+
+        <div>
+            <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2">
+                Wallet Provider
+            </label>
+
+            <select
+                    class="w-full bg-black/40 border border-yellow-500/20 rounded-xl px-4 py-3 outline-none">
+
+                <option>Apple Pay</option>
+                <option>Google Pay</option>
+                <option>PayPal</option>
+                <option>Vodafone Cash</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2">
+                Mobile Number / Wallet Email
+            </label>
+
+            <input
+                    required
+                    class="w-full bg-black/40 border border-yellow-500/20 rounded-xl px-4 py-3 outline-none"
+                    placeholder="+20 100 000 0000">
+        </div>
+
+        <button
+                id="walletBtn"
+                class="gold-btn w-full rounded-2xl py-4 mt-4">
+            Confirm Payment
+        </button>
+
+    </form>
+
+</div>
+
+<script src="/js/api.js"></script>
+
+<script>
+    async function payWallet(event) {
+
+        event.preventDefault();
+
+        const btn = document.getElementById('walletBtn');
+
+        btn.disabled = true;
+        btn.textContent = 'Processing...';
+
+        try {
+
+            const payload = JSON.parse(
+                localStorage.getItem('pendingCheckout')
+            );
+
+            await api.post('/orders/checkout', payload);
+
+            localStorage.removeItem('pendingCheckout');
+
+            window.location.href = '/my-orders.html';
+
+        } catch (e) {
+
+            alert(e.message);
+
+            btn.disabled = false;
+            btn.textContent = 'Confirm Payment';
+        }
+    }
+</script>
+
+</body>
+</html>
