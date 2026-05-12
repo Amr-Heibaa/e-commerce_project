@@ -46,9 +46,9 @@ body {
 }
 
 .input-luxury {
-    background: rgba(255,255,255,.06);
+    background-color: #111111 !important;
+    color: white !important;
     border: 1px solid rgba(212,175,55,.25);
-    color: white;
 }
 
 .input-luxury:focus {
