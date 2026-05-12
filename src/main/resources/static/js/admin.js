@@ -584,11 +584,54 @@ function adminOrderRow(order) {
                     </p>
                 </div>
             </div>
+            
+            
             <div class="flex flex-wrap items-center gap-3">
-                ${total ? `<span class="text-xl font-serif gold-text">${adminMoney(total)}</span>` : ''}
-                ${itemCount ? `<span class="text-xs text-gray-400">${itemCount} item${itemCount !== 1 ? 's' : ''}</span>` : ''}
-                ${statusBadge(status)}
-            </div>
+
+    ${total ? `
+        <span class="text-xl font-serif gold-text">
+            ${adminMoney(total)}
+        </span>
+    ` : ''}
+
+    ${itemCount ? `
+        <span class="text-xs text-gray-400">
+            ${itemCount} item${itemCount !== 1 ? 's' : ''}
+        </span>
+    ` : ''}
+
+    ${statusBadge(status)}
+
+    ${
+        order.payment?.paymentMethod ||
+        order.paymentMethod
+            ? `
+            <span class="rounded-full px-3 py-1 text-xs border border-yellow-500/30 text-yellow-300">
+                ${
+                (order.payment?.paymentMethod || order.paymentMethod)
+                    .replaceAll('_', ' ')
+            }
+            </span>
+        `
+            : ''
+    }
+
+    ${
+        order.payment?.status ||
+        order.paymentStatus
+            ? `
+            <span class="rounded-full px-3 py-1 text-xs border border-blue-500/30 text-blue-300">
+                Payment:
+                ${
+                order.payment?.status ||
+                order.paymentStatus
+            }
+            </span>
+        `
+            : ''
+    }
+
+</div>
         </div>
 
         <div class="mt-4 pt-4 border-t border-yellow-500/10 flex flex-wrap gap-2">
@@ -843,5 +886,7 @@ function _errorState(message) {
         <p class="text-red-300 text-sm">Error: ${escapeHtml(message)}</p>
         <button onclick="location.reload()" class="text-xs text-gray-500 hover:text-gray-300 underline">Try reloading</button>
     </div>`;
+
+
 
 }
