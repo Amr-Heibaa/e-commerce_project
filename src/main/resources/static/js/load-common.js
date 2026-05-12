@@ -199,9 +199,9 @@
                         <p class="font-serif">${name}</p>
                         <p class="text-gray-400 text-sm">$${price.toFixed(2)} each</p>
                         <div class="flex items-center gap-0 mt-2">
-                            <button onclick="drawerUpdateQty(${id}, ${qty - 1})" class="qty-btn">−</button>
+<button onclick="drawerUpdateQty(${id}, ${qty-1}, ${item.variantId || item.productVariantId || 0})" class="qty-btn">−</button>
                             <span class="w-10 text-center">${qty}</span>
-                            <button onclick="drawerUpdateQty(${id}, ${qty + 1})" class="qty-btn">+</button>
+<button onclick="drawerUpdateQty(${id}, ${qty+1}, ${item.variantId || item.productVariantId || 0})" class="qty-btn">+</button>
                         </div>
                     </div>
                     <div class="flex flex-col items-end justify-between">
@@ -222,15 +222,14 @@
         }
     };
 
-    window.drawerUpdateQty = async (id, qty) => {
-        if (qty < 1) {
-            window.drawerRemoveItem(id);
-            return;
-        }
-
-        await api.put(`/cart/items/${id}`, { quantity: qty });
-        await refreshCartDrawer();
-    };
+window.drawerUpdateQty = async (id, qty, variantId) => {
+    if (qty < 1) { window.drawerRemoveItem(id); return; }
+    // Build the payload – only add variantId if it's > 0
+    const payload = { quantity: qty };
+    if (variantId) payload.variantId = variantId;
+    await api.put(`/cart/items/${id}`, payload);
+    await refreshCartDrawer();
+};
 
     window.drawerRemoveItem = async (id) => {
         await api.delete(`/cart/items/${id}`);

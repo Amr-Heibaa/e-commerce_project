@@ -187,7 +187,6 @@ function animateCount(el, target) {
 function statusBadge(status) {
     const map = {
         PENDING:   'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
-        PAID:      'bg-blue-500/20   text-blue-300   border-blue-500/30',
         SHIPPED:   'bg-purple-500/20 text-purple-300 border-purple-500/30',
         DELIVERED: 'bg-green-500/20  text-green-300  border-green-500/30',
         CANCELLED: 'bg-red-500/20    text-red-300    border-red-500/30',
@@ -635,7 +634,7 @@ function adminOrderRow(order) {
         </div>
 
         <div class="mt-4 pt-4 border-t border-yellow-500/10 flex flex-wrap gap-2">
-            ${['PENDING','PAID','SHIPPED','DELIVERED','CANCELLED'].map(s => `
+            ${['PENDING','SHIPPED','DELIVERED','CANCELLED'].map(s => `
                 <button onclick="updateOrderStatus(${order.id}, '${s}')"
                         class="rounded-xl px-3 py-1.5 text-xs transition-colors ${status === s
                             ? 'bg-yellow-500/20 border border-yellow-500/40 gold-text cursor-default'

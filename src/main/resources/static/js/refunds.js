@@ -11,7 +11,7 @@ async function loadMyRefunds() {
             return;
         }
         const statusColors = {
-            PENDING: 'bg-yellow-500/20 text-yellow-300',
+//            PENDING: 'bg-yellow-500/20 text-yellow-300',
             APPROVED: 'bg-green-500/20 text-green-300',
             REJECTED: 'bg-red-500/20 text-red-300',
         };

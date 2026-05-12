@@ -2,39 +2,210 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Login | Essentiel </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | Perfume Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css" />
     <style>
-        /* Minimal: no sidebar on login, but you could add one if desired.
-           I'll keep the header with logo only, no sidebar. */
-        .navbar { border-bottom: 1px solid rgba(245, 200, 66, 0.2); }
+        @keyframes fadeIn  { from{opacity:0} to{opacity:1} }
+        @keyframes slideUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0 !important;
+        }
+        body {
+            background: #0a0a0a;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background:
+                radial-gradient(ellipse at 30% 20%, rgba(202,138,4,.07) 0%, transparent 55%),
+                radial-gradient(ellipse at 75% 80%, rgba(202,138,4,.05) 0%, transparent 50%);
+            pointer-events: none;
+            animation: fadeIn 1.2s ease both;
+        }
+
+        .close-btn {
+            position: fixed;
+            top: 20px; right: 24px;
+            z-index: 100;
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            border: 1px solid rgba(202,138,4,.3);
+            background: rgba(10,10,10,.8);
+            backdrop-filter: blur(8px);
+            color: #9ca3af;
+            font-size: 0.9rem;
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none;
+            transition: border-color .2s, color .2s, background .2s, transform .2s;
+            cursor: pointer;
+        }
+        .close-btn:hover {
+            border-color: rgba(202,138,4,.7);
+            color: #ca8a04;
+            background: rgba(202,138,4,.08);
+            transform: scale(1.08);
+        }
+
+        .auth-card {
+            position: relative;
+            width: 100%;
+            max-width: 380px;
+            background: rgba(18,18,18,.92);
+            border: 1px solid rgba(202,138,4,.18);
+            border-radius: 24px;
+            padding: 38px 36px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 32px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(202,138,4,.05);
+            animation: slideUp .55s cubic-bezier(.22,1,.36,1) both;
+            margin: 16px;
+        }
+
+        .auth-input {
+            width: 100%;
+            background: rgba(0,0,0,.5);
+            border: 1px solid rgba(202,138,4,.18);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: #fff;
+            font-size: 0.85rem;
+            outline: none;
+            transition: border-color .2s, background .2s;
+            box-sizing: border-box;
+        }
+        .auth-input:focus {
+            border-color: rgba(202,138,4,.6);
+            background: rgba(202,138,4,.04);
+        }
+        .auth-input::placeholder { color: #2d2d2d; }
+
+        .auth-label {
+            display: block;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: .16em;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #d4a017 0%, #b8860b 55%, #ca8a04 100%);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: .12em;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(202,138,4,.25);
+            transition: opacity .2s, transform .15s, box-shadow .2s;
+            margin-top: 6px;
+        }
+        .auth-btn:hover  { opacity:.9; transform:translateY(-1px); box-shadow:0 8px 28px rgba(202,138,4,.35); }
+        .auth-btn:active { transform:translateY(0); }
+
+        .gold-divider {
+            width: 32px; height: 1px;
+            background: linear-gradient(90deg, transparent, #ca8a04, transparent);
+            margin: 0 auto 18px;
+        }
+
+        .auth-card h1 {
+            font-size: 1.5rem;
+            margin-bottom: 6px;
+        }
     </style>
 </head>
-<body class="luxury-bg min-h-screen flex items-center justify-center px-4">
-<div class="glass-card w-full max-w-md rounded-3xl p-8">
-    <div class="text-center mb-8">
-        <h1 class="text-4xl font-serif gold-text mb-2">Essentiel </h1>
-        <p class="text-sm text-gray-300">Enter your private fragrance world</p>
+<body>
+
+<a href="/index.html" class="close-btn" title="Back to store" aria-label="Close and return to store">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+</a>
+
+<div class="auth-card">
+
+    <div style="text-align:center;margin-bottom:28px;">
+        <a href="/index.html"
+           style="font-family:serif;font-size:1.5rem;color:#ca8a04;text-decoration:none;
+                      letter-spacing:.04em;display:inline-block;margin-bottom:10px;">
+            Perfume Store
+        </a>
+        <div class="gold-divider"></div>
+        <p style="font-size:0.8rem;color:#4b5563;">Enter your private fragrance world</p>
     </div>
-    <div id="errorBox" class="hidden mb-4 rounded-xl bg-red-500/20 border border-red-400/40 text-red-200 px-4 py-3 text-sm"></div>
-    <form onsubmit="login(event)" class="space-y-5">
+
+    <div id="errorBox"
+         class="hidden mb-4 rounded-xl px-3 py-2 text-sm"
+         style="background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.25);color:#fca5a5;">
+    </div>
+
+    <form onsubmit="login(event)" style="display:flex;flex-direction:column;gap:18px;">
+
         <div>
-            <label class="block text-sm mb-2 text-gray-300">Email</label>
-            <input name="email" type="email" required class="input-luxury w-full rounded-xl px-4 py-3" />
+            <label class="auth-label">Email</label>
+            <input name="email" type="email" required placeholder="you@example.com" class="auth-input" />
         </div>
+
         <div>
-            <label class="block text-sm mb-2 text-gray-300">Password</label>
-            <input name="password" type="password" required class="input-luxury w-full rounded-xl px-4 py-3" />
+            <label class="auth-label">Password</label>
+            <div style="position:relative;">
+                <input name="password" type="password" required placeholder="••••••••" class="auth-input"
+                       id="loginPassword" />
+                <button type="button"
+                        onclick="togglePwd('loginPassword','loginPwdEye')"
+                        id="loginPwdEye"
+                        style="position:absolute;right:12px;top:50%;transform:translateY(-50%);
+                                   background:none;border:none;cursor:pointer;color:#4b5563;
+                                   font-size:0.8rem;padding:0;transition:color .2s;"
+                        onmouseover="this.style.color='#ca8a04'"
+                        onmouseout="this.style.color='#4b5563'">👁</button>
+            </div>
         </div>
-        <button class="gold-btn w-full rounded-xl py-3">Login</button>
+
+        <button type="submit" class="auth-btn">Login</button>
+
     </form>
-    <p class="text-center text-sm text-gray-400 mt-6">
-        New customer? <a href="/register.html" class="gold-text hover:underline">Create account</a>
+
+    <p style="text-align:center;font-size:0.8rem;color:#374151;margin-top:22px;">
+        New customer?
+        <a href="/register.html"
+           style="color:#ca8a04;text-decoration:none;margin-left:4px;transition:opacity .2s;"
+           onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
+            Create account
+        </a>
     </p>
+
 </div>
+
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
-</body>
+<script>
+    if (api.isLoggedIn()) {
+        window.location.href = api.isAdmin() ? '/admin-dashboard.html' : '/index.html';
+    }
 
+    function togglePwd(inputId, btnId) {
+        const inp = document.getElementById(inputId);
+        inp.type  = inp.type === 'password' ? 'text' : 'password';
+    }
+</script>
+</body>
 </html>

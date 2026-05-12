@@ -3,86 +3,640 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Checkout | Essentiel</title>
+    <title>Checkout | Perfume Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css" />
     <style>
-        @keyframes fadeUp { from { opacity:0;transform:translateY(16px); } to { opacity:1;transform:translateY(0); } }
-        .fade-up { animation: fadeUp .5s ease both; }
-        .checkout-label { display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.18em;color:#6b7280;margin-bottom:8px; }
-        .checkout-input { width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(202,138,4,.2);border-radius:12px;padding:13px 16px;color:#fff;font-size:.9rem;outline:none;transition:border-color .2s; }
-        .checkout-input:focus { border-color:rgba(202,138,4,.55); }
-        .checkout-input::placeholder { color:#374151; }
-        .checkout-input option { background:#111; }
-        .step-indicator { display:flex;align-items:center;gap:0;margin-bottom:36px; }
-        .step { display:flex;flex-direction:column;align-items:center;gap:6px;flex:1; }
-        .step-circle { width:32px;height:32px;border-radius:50%;border:1px solid rgba(202,138,4,.4);display:flex;align-items:center;justify-content:center;font-size:.75rem;color:#ca8a04; }
-        .step-circle.active { background:rgba(202,138,4,.2); }
-        .step-line { height:1px;flex:1;background:rgba(202,138,4,.2);margin-top:-22px; }
-        .step-label { font-size:.65rem;text-transform:uppercase;letter-spacing:.15em;color:#6b7280; }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes spin    { to{transform:rotate(360deg)} }
+        .fade-up   { animation:fadeUp .5s ease both; }
+        .fade-up-2 { animation-delay:.1s; }
+
+        /* ── Steps ── */
+        .step-wrap  { display:flex; align-items:center; margin-bottom:36px; }
+        .step       { display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; }
+        .step-circle{
+            width:32px;height:32px;border-radius:50%;
+            border:1px solid rgba(202,138,4,.35);
+            display:flex;align-items:center;justify-content:center;
+            font-size:.75rem;color:#ca8a04;transition:all .35s;
+        }
+        .step-circle.active { background:rgba(202,138,4,.18);border-color:#ca8a04; }
+        .step-circle.done   { background:#ca8a04;color:#000;border-color:#ca8a04; }
+        .step-line  { height:1px;flex:1;background:rgba(202,138,4,.2);margin-top:-22px;transition:background .35s; }
+        .step-line.done { background:rgba(202,138,4,.55); }
+        .step-label { font-size:.6rem;text-transform:uppercase;letter-spacing:.15em;color:#6b7280; }
+
+        /* ── Inputs ── */
+        .co-input {
+            width:100%;
+            background:rgba(255,255,255,.04);
+            border:1px solid rgba(202,138,4,.2);
+            border-radius:12px;
+            padding:13px 16px;
+            color:#fff;font-size:.9rem;
+            outline:none;
+            transition:border-color .2s,background .2s;
+        }
+        .co-input:focus  { border-color:rgba(202,138,4,.6);background:rgba(202,138,4,.03); }
+        .co-input.error  { border-color:rgba(248,113,113,.65)!important; }
+        .co-input.valid  { border-color:rgba(74,222,128,.45); }
+        .co-input::placeholder { color:#374151; }
+        .co-input option { background:#111; }
+
+        .co-label {
+            display:block;font-size:.65rem;
+            text-transform:uppercase;letter-spacing:.2em;
+            color:#6b7280;margin-bottom:8px;
+        }
+        .field-err { font-size:.72rem;color:#f87171;margin-top:5px;display:none; }
+        .field-err.show { display:block; }
+
+        /* ── Payment method radio ── */
+        .pay-radio {
+            display:flex;align-items:center;gap:14px;
+            border:1px solid rgba(202,138,4,.2);border-radius:14px;
+            padding:16px 18px;cursor:pointer;
+            transition:background .2s,border-color .2s;
+        }
+        .pay-radio.selected { background:rgba(202,138,4,.07);border-color:rgba(202,138,4,.5); }
+        .pay-radio:hover     { background:rgba(202,138,4,.04); }
+
+        /* ── Credit card panel ── */
+        #ccPanel {
+            display:none;margin-top:18px;
+            background:rgba(12,12,12,.97);
+            border:1px solid rgba(202,138,4,.22);
+            border-radius:20px;padding:28px 24px;
+            position:relative;overflow:hidden;
+        }
+        #ccPanel::before {
+            content:'';position:absolute;inset:0;
+            background:radial-gradient(ellipse at 85% 15%,rgba(202,138,4,.07) 0%,transparent 60%);
+            pointer-events:none;
+        }
+        #ccPanel.show { display:block;animation:fadeUp .3s ease both; }
+
+        /* Card type badge */
+        #cardBadge {
+            position:absolute;right:18px;top:18px;
+            font-size:.62rem;text-transform:uppercase;letter-spacing:.18em;
+            color:#ca8a04;background:rgba(202,138,4,.1);
+            border:1px solid rgba(202,138,4,.25);
+            padding:4px 10px;border-radius:20px;
+            opacity:0;transition:opacity .3s;pointer-events:none;
+        }
+        #cardBadge.show { opacity:1; }
+
+        /* Virtual card preview */
+        #cardPreview {
+            background:linear-gradient(135deg,#161616 0%,#0c0c0c 100%);
+            border:1px solid rgba(202,138,4,.18);
+            border-radius:18px;
+            padding:22px 20px 20px;
+            margin-bottom:24px;
+            position:relative;overflow:hidden;
+        }
+        #cardPreview::after {
+            content:'';position:absolute;
+            width:200px;height:200px;border-radius:50%;
+            background:radial-gradient(circle,rgba(202,138,4,.07),transparent);
+            right:-50px;top:-50px;pointer-events:none;
+        }
+        .prev-chip {
+            width:36px;height:26px;
+            background:linear-gradient(135deg,#ca8a04,#8a5c00);
+            border-radius:5px;margin-bottom:14px;
+        }
+        .prev-num {
+            font-family:monospace;font-size:1.08rem;
+            letter-spacing:.22em;color:rgba(255,255,255,.65);
+            margin-bottom:16px;line-height:1;
+        }
+        .prev-row  { display:flex;justify-content:space-between;align-items:flex-end; }
+        .prev-lbl  { font-size:.52rem;text-transform:uppercase;letter-spacing:.18em;color:#374151;margin-bottom:3px; }
+        .prev-val  { font-size:.8rem;color:#d1d5db;letter-spacing:.06em; }
+
+        /* Pay Now button */
+        .pay-now-btn {
+            width:100%;padding:16px;margin-top:20px;
+            background:linear-gradient(135deg,#d4a017 0%,#a16207 55%,#ca8a04 100%);
+            border:none;border-radius:14px;
+            color:#000;font-size:.95rem;font-weight:700;
+            letter-spacing:.06em;cursor:pointer;
+            box-shadow:0 4px 24px rgba(202,138,4,.28);
+            transition:opacity .2s,transform .15s,box-shadow .2s;
+        }
+        .pay-now-btn:hover   { opacity:.9;transform:translateY(-1px);box-shadow:0 8px 32px rgba(202,138,4,.4); }
+        .pay-now-btn:active  { transform:translateY(0); }
+        .pay-now-btn:disabled{ opacity:.45;cursor:not-allowed;transform:none; }
+
+        .secure-row {
+            display:flex;align-items:center;justify-content:center;gap:7px;
+            font-size:.68rem;color:#374151;margin-top:12px;
+        }
     </style>
 </head>
+
 <body class="bg-black text-white">
 
+<script src="/js/api.js"></script>
+<script src="/js/nav-template.js"></script>
+<script src="/js/nav.js"></script>
+
 <main class="px-6 md:px-12 py-14 max-w-screen-xl mx-auto">
-    <div class="mb-10 fade-up"><p class="gold-text uppercase tracking-[0.35em] text-xs mb-3">Secure Checkout</p><h1 class="text-5xl font-serif">Complete Your Order</h1></div>
-    <div class="step-indicator max-w-sm mb-10 fade-up">
-        <div class="step"><div class="step-circle active">1</div><span class="step-label">Shipping</span></div>
-        <div class="step-line"></div>
-        <div class="step"><div class="step-circle">2</div><span class="step-label">Payment</span></div>
-        <div class="step-line"></div>
-        <div class="step"><div class="step-circle">3</div><span class="step-label">Confirm</span></div>
+
+    <div class="mb-10 fade-up">
+        <p class="gold-text uppercase tracking-[0.35em] text-xs mb-3">Secure Checkout</p>
+        <h1 class="text-5xl font-serif">Complete Your Order</h1>
     </div>
+
+    <!-- Step indicator -->
+    <div class="step-wrap max-w-xs mb-10 fade-up">
+        <div class="step"><div class="step-circle done" id="step1">✓</div><span class="step-label">Shipping</span></div>
+        <div class="step-line" id="line1"></div>
+        <div class="step"><div class="step-circle active" id="step2">2</div><span class="step-label">Payment</span></div>
+        <div class="step-line" id="line2"></div>
+        <div class="step"><div class="step-circle" id="step3">3</div><span class="step-label">Confirm</span></div>
+    </div>
+
     <div id="checkoutMessage" class="hidden mb-6 rounded-xl px-4 py-3 text-sm"></div>
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <form onsubmit="placeOrder(event)" class="lg:col-span-2 space-y-6 fade-up">
-            <div class="glass-card rounded-3xl p-7"><h2 class="text-xl font-serif gold-text mb-6">Shipping Address</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5"><div><label class="checkout-label">Full Name *</label><input name="fullName" required class="checkout-input" placeholder="John Doe"/></div><div><label class="checkout-label">Phone *</label><input name="phone" required class="checkout-input" placeholder="+20 100 000 0000"/></div></div>
-                <div class="mb-5"><label class="checkout-label">Address Line 1 *</label><input name="addressLine1" required class="checkout-input" placeholder="Street address"/></div>
-                <div class="mb-5"><label class="checkout-label">Address Line 2</label><input name="addressLine2" class="checkout-input" placeholder="Apartment, suite, etc. (optional)"/></div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5"><div><label class="checkout-label">City *</label><input name="city" required class="checkout-input" placeholder="Cairo"/></div><div><label class="checkout-label">State</label><input name="state" class="checkout-input" placeholder="State / Province"/></div><div><label class="checkout-label">Postal Code *</label><input name="postalCode" required class="checkout-input" placeholder="12345"/></div></div>
-                <div><label class="checkout-label">Country *</label><input name="country" value="Egypt" required class="checkout-input"/></div>
-            </div>
-            <div class="glass-card rounded-3xl p-7"><h2 class="text-xl font-serif gold-text mb-6">Payment Method</h2>
-                <div class="space-y-3">
-                    <label style="display:flex;align-items:center;gap:14px;border:1px solid rgba(202,138,4,.2);border-radius:14px;padding:16px 18px;cursor:pointer;"><input type="radio" name="paymentMethod" value="CASH_ON_DELIVERY" checked class="accent-yellow-500"/><div><p class="font-medium text-sm">Cash on Delivery</p><p class="text-gray-500 text-xs">Pay when your order arrives</p></div><span>💵</span></label>
-                    <label style="display:flex;align-items:center;gap:14px;border:1px solid rgba(202,138,4,.2);border-radius:14px;padding:16px 18px;cursor:pointer;">
-                        <input type="radio" name="paymentMethod" value="CREDIT_CARD" class="accent-yellow-500"/>
 
-                        <div>
-                            <p class="font-medium text-sm">Credit Card</p>
-                            <p class="text-gray-500 text-xs">Visa, Mastercard, Amex</p>
-                        </div>
+        <!-- FORM -->
+        <form onsubmit="placeOrder(event)" id="checkoutForm" class="lg:col-span-2 space-y-6 fade-up fade-up-2">
 
-                        <span>💳</span>
-                    </label>
+            <!-- Shipping -->
+            <div class="glass-card rounded-3xl p-7">
+                <h2 class="text-xl font-serif gold-text mb-6">Shipping Address</h2>
 
-                    <label style="display:flex;align-items:center;gap:14px;border:1px solid rgba(202,138,4,.2);border-radius:14px;padding:16px 18px;cursor:pointer;">
-                        <input type="radio" name="paymentMethod" value="DIGITAL_WALLET" class="accent-yellow-500"/>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                    <div>
+                        <label class="co-label">Full Name *</label>
+                        <input name="fullName" required placeholder="John Doe" class="co-input" />
+                    </div>
+                    <div>
+                        <label class="co-label">Phone *</label>
+                        <input name="phone" required placeholder="+20 100 000 0000" class="co-input" />
+                    </div>
+                </div>
 
-                        <div>
-                            <p class="font-medium text-sm">Digital Wallet</p>
-                            <p class="text-gray-500 text-xs">Apple Pay, Google Pay, Wallet</p>
-                        </div>
+                <div class="mb-5">
+                    <label class="co-label">Address Line 1 *</label>
+                    <input name="addressLine1" required placeholder="Street address" class="co-input" />
+                </div>
 
-                        <span>📱</span>
-                    </label>
+                <div class="mb-5">
+                    <label class="co-label">Address Line 2</label>
+                    <input name="addressLine2" placeholder="Apartment, suite, etc. (optional)" class="co-input" />
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
+                    <div>
+                        <label class="co-label">City *</label>
+                        <input name="city" required placeholder="Cairo" class="co-input" />
+                    </div>
+                    <div>
+                        <label class="co-label">State</label>
+                        <input name="state" placeholder="State / Province" class="co-input" />
+                    </div>
+                    <div>
+                        <label class="co-label">Postal Code *</label>
+                        <input name="postalCode" required placeholder="12345" class="co-input" />
+                    </div>
+                </div>
+
+                <div>
+                    <label class="co-label">Country *</label>
+                    <input name="country" value="Egypt" required class="co-input" />
                 </div>
             </div>
-            <button type="submit" class="gold-btn w-full rounded-2xl py-4 font-medium" style="font-size:.85rem;letter-spacing:.15em;">Place Order</button>
+
+            <!-- Payment Method -->
+            <div class="glass-card rounded-3xl p-7">
+                <h2 class="text-xl font-serif gold-text mb-6">Payment Method</h2>
+
+                <div class="space-y-3">
+                    <!-- Cash -->
+                    <label class="pay-radio selected">
+                        <input type="radio" name="paymentMethod" value="CASH_ON_DELIVERY"
+                               checked class="accent-yellow-500"
+                               onchange="toggleCCPanel(false)" />
+                        <div>
+                            <p class="font-medium text-sm">Cash on Delivery</p>
+                            <p class="text-gray-500 text-xs mt-0.5">Pay when your order arrives</p>
+                        </div>
+                        <span style="margin-left:auto;font-size:1.4rem;">💵</span>
+                    </label>
+
+                    <!-- Credit Card -->
+                    <label class="pay-radio">
+                        <input type="radio" name="paymentMethod" value="CREDIT_CARD"
+                               class="accent-yellow-500"
+                               onchange="toggleCCPanel(true)" />
+                        <div>
+                            <p class="font-medium text-sm">Credit Card</p>
+                            <p class="text-gray-500 text-xs mt-0.5">Visa, Mastercard, Amex</p>
+                        </div>
+                        <span style="margin-left:auto;font-size:1.4rem;">💳</span>
+                    </label>
+
+                    <!-- ═══════════ CREDIT CARD PANEL ═══════════ -->
+                    <div id="ccPanel">
+
+                        <span id="cardBadge"></span>
+
+                        <!-- Preview card -->
+                        <div id="cardPreview">
+                            <div class="prev-chip"></div>
+                            <div class="prev-num" id="prevNum">•••• &nbsp; •••• &nbsp; •••• &nbsp; ••••</div>
+                            <div class="prev-row">
+                                <div>
+                                    <p class="prev-lbl">Card Holder</p>
+                                    <p class="prev-val" id="prevName">FULL NAME</p>
+                                </div>
+                                <div>
+                                    <p class="prev-lbl">Expires</p>
+                                    <p class="prev-val" id="prevExpiry">MM / YY</p>
+                                </div>
+                                <div style="text-align:right">
+                                    <p class="prev-lbl">Network</p>
+                                    <p class="prev-val" id="prevNetwork" style="color:#ca8a04;">—</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Heading -->
+                        <p class="gold-text uppercase tracking-[0.3em] text-xs mb-1">Secure Payment</p>
+                        <h3 class="text-2xl font-serif mb-7">Credit Card</h3>
+
+                        <!-- Card Holder -->
+                        <div class="mb-5">
+                            <label class="co-label">Card Holder</label>
+                            <input id="ccName" type="text" placeholder="Full name on card"
+                                   class="co-input" autocomplete="cc-name"
+                                   oninput="onNameInput(this)"
+                                   onblur="validateName(this,true)" />
+                            <p class="field-err" id="errName">Please enter the name as it appears on your card.</p>
+                        </div>
+
+                        <!-- Card Number -->
+                        <div class="mb-5">
+                            <label class="co-label">Card Number</label>
+                            <input id="ccNum" type="text" placeholder="1234 5678 9012 3456"
+                                   class="co-input" autocomplete="cc-number"
+                                   maxlength="19" inputmode="numeric"
+                                   oninput="onNumInput(this)"
+                                   onblur="validateNum(this,true)" />
+                            <p class="field-err" id="errNum">Please enter a valid 16-digit card number.</p>
+                        </div>
+
+                        <!-- Expiry + CVV -->
+                        <div class="grid grid-cols-2 gap-5">
+                            <div>
+                                <label class="co-label">Expiry</label>
+                                <input id="ccExpiry" type="text" placeholder="MM / YY"
+                                       class="co-input" autocomplete="cc-exp"
+                                       maxlength="7" inputmode="numeric"
+                                       oninput="onExpiryInput(this)"
+                                       onblur="validateExpiry(this,true)" />
+                                <p class="field-err" id="errExpiry">Enter a valid future date (MM / YY).</p>
+                            </div>
+                            <div>
+                                <label class="co-label">CVV</label>
+                                <div style="position:relative;">
+                                    <input id="ccCVV" type="password" placeholder="•••"
+                                           class="co-input" autocomplete="cc-csc"
+                                           maxlength="4" inputmode="numeric"
+                                           oninput="onCVVInput(this)"
+                                           onblur="validateCVV(this,true)" />
+                                    <button type="button" id="cvvToggle"
+                                            onclick="toggleCVV()"
+                                            style="position:absolute;right:12px;top:50%;transform:translateY(-50%);
+                                                   background:none;border:none;cursor:pointer;color:#6b7280;font-size:.85rem;
+                                                   padding:0;line-height:1;transition:color .2s;"
+                                            onmouseover="this.style.color='#ca8a04'"
+                                            onmouseout="this.style.color='#6b7280'">
+                                        👁
+                                    </button>
+                                </div>
+                                <p class="field-err" id="errCVV">CVV must be 3 or 4 digits.</p>
+                            </div>
+                        </div>
+
+                        <!-- Pay Now -->
+                        <button type="submit" class="pay-now-btn" id="payNowBtn">
+                            🔒 &nbsp; Pay Now
+                        </button>
+
+                        <p class="secure-row">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2.2">
+                                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+                            </svg>
+                            256-bit SSL encrypted &nbsp;·&nbsp; Card data never stored
+                        </p>
+
+                    </div><!-- /ccPanel -->
+                </div>
+            </div>
+
+            <!-- Place order (cash only) -->
+            <button type="submit" id="placeOrderBtn"
+                    class="gold-btn w-full rounded-2xl py-4 font-medium"
+                    style="font-size:.85rem;letter-spacing:.15em;">
+                Place Order
+            </button>
+
         </form>
-        <aside class="glass-card rounded-3xl p-7 h-fit sticky top-24 fade-up"><h2 class="text-xl font-serif gold-text mb-6">Order Summary</h2><div id="checkoutSummary" class="space-y-4 mb-6"></div><div style="height:1px;background:rgba(202,138,4,.15);margin-bottom:16px;"></div><div class="flex justify-between items-center"><span class="text-gray-400 text-sm">Total</span><span class="text-2xl font-serif gold-text" id="checkoutTotal">$0.00</span></div></aside>
+
+        <!-- ORDER SUMMARY -->
+        <aside class="glass-card rounded-3xl p-7 h-fit sticky top-24 fade-up">
+            <h2 class="text-xl font-serif gold-text mb-6">Order Summary</h2>
+            <div id="checkoutSummary" class="mb-4"></div>
+            <div style="height:1px;background:rgba(202,138,4,.15);margin-bottom:16px;"></div>
+            <div class="flex justify-between items-center mb-6">
+                <span class="text-gray-400 text-sm">Total</span>
+                <span class="text-2xl font-serif gold-text" id="checkoutTotal">$0.00</span>
+            </div>
+            <div class="space-y-3 pt-4" style="border-top:1px solid rgba(202,138,4,.1);">
+                <div class="flex items-center gap-3 text-xs text-gray-600">🔒 256-bit SSL encryption</div>
+                <div class="flex items-center gap-3 text-xs text-gray-600">🚚 Free shipping included</div>
+                <div class="flex items-center gap-3 text-xs text-gray-600">📦 Luxury gift packaging</div>
+                <div class="flex items-center gap-3 text-xs text-gray-600">↩️ 30-day easy returns</div>
+            </div>
+        </aside>
+
     </div>
 </main>
 
-<script src="/js/api.js"></script>
-<script src="/js/load-common.js"></script>
+<footer style="border-top:1px solid rgba(202,138,4,.1);background:#050505;padding:28px 64px;text-align:center;margin-top:60px;">
+    <p style="color:#374151;font-size:.8rem;">© 2026 Perfume Store. All rights reserved.</p>
+</footer>
+
 <script src="/js/products.js"></script>
 <script src="/js/cart.js"></script>
 <script>
-    requireCartAuth();
-    loadCheckoutSummary();
-</script>
-</body>
+    /* ═══════════════════════════════════════════════════════
+       CARD PANEL TOGGLE
+    ═══════════════════════════════════════════════════════ */
+    function toggleCCPanel(show) {
+        const panel    = document.getElementById('ccPanel');
+        const cashBtn  = document.getElementById('placeOrderBtn');
 
+        if (show) {
+            panel.classList.add('show');
+            cashBtn.style.display = 'none';
+            // Mark card inputs required
+            ['ccName','ccNum','ccExpiry','ccCVV'].forEach(id => {
+                document.getElementById(id).required = true;
+            });
+        } else {
+            panel.classList.remove('show');
+            cashBtn.style.display = '';
+            ['ccName','ccNum','ccExpiry','ccCVV'].forEach(id => {
+                const el = document.getElementById(id);
+                el.required = false;
+                el.classList.remove('error','valid');
+                el.value = '';
+            });
+            document.querySelectorAll('.field-err').forEach(e => e.classList.remove('show'));
+            // Reset preview
+            document.getElementById('prevNum').innerHTML    = '•••• &nbsp; •••• &nbsp; •••• &nbsp; ••••';
+            document.getElementById('prevName').textContent = 'FULL NAME';
+            document.getElementById('prevExpiry').textContent = 'MM / YY';
+            document.getElementById('prevNetwork').textContent = '—';
+            document.getElementById('cardBadge').classList.remove('show');
+        }
+
+        // Update radio label highlight
+        document.querySelectorAll('.pay-radio').forEach(lbl => {
+            lbl.classList.toggle('selected', lbl.querySelector('input')?.checked);
+        });
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       LIVE INPUT HANDLERS
+    ═══════════════════════════════════════════════════════ */
+    function onNameInput(el) {
+        el.value = el.value.toUpperCase();
+        document.getElementById('prevName').textContent = el.value || 'FULL NAME';
+        if (el.value.length >= 2) validateName(el, false);
+    }
+
+    function onNumInput(el) {
+        const raw    = el.value.replace(/\D/g,'').substring(0,16);
+        el.value     = raw.replace(/(.{4})/g,'$1 ').trim();
+
+        // Update preview
+        const padded = raw.padEnd(16,'•');
+        const groups = padded.match(/.{1,4}/g) || [];
+        document.getElementById('prevNum').innerHTML = groups.join(' &nbsp; ');
+
+        // Card type
+        const badge   = document.getElementById('cardBadge');
+        const network = document.getElementById('prevNetwork');
+        const type    = detectCardType(raw);
+        if (type) {
+            badge.textContent = type;
+            badge.classList.add('show');
+            network.textContent = type;
+            network.style.color = '#ca8a04';
+        } else {
+            badge.classList.remove('show');
+            network.textContent = '—';
+        }
+
+        if (raw.length >= 4) validateNum(el, false);
+    }
+
+    function onExpiryInput(el) {
+        const raw = el.value.replace(/\D/g,'').substring(0,4);
+        if (raw.length >= 3) {
+            el.value = raw.substring(0,2) + ' / ' + raw.substring(2);
+        } else if (raw.length === 2 && !el.value.includes('/')) {
+            el.value = raw + ' / ';
+        } else {
+            el.value = raw;
+        }
+        const mm = raw.substring(0,2);
+        const yy = raw.substring(2,4);
+        document.getElementById('prevExpiry').textContent =
+            raw.length >= 2 ? (mm + ' / ' + (yy || 'YY')) : 'MM / YY';
+        if (raw.length === 4) validateExpiry(el, false);
+    }
+
+    function onCVVInput(el) {
+        el.value = el.value.replace(/\D/g,'').substring(0,4);
+        if (el.value.length >= 3) validateCVV(el, false);
+    }
+
+    function toggleCVV() {
+        const inp = document.getElementById('ccCVV');
+        inp.type  = inp.type === 'password' ? 'text' : 'password';
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       CARD TYPE DETECTION
+    ═══════════════════════════════════════════════════════ */
+    function detectCardType(digits) {
+        if (/^4/.test(digits))              return 'Visa';
+        if (/^5[1-5]|^2[2-7]/.test(digits)) return 'Mastercard';
+        if (/^3[47]/.test(digits))          return 'Amex';
+        if (/^6(?:011|5)/.test(digits))     return 'Discover';
+        return '';
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       VALIDATION — each returns boolean
+       strict=true: always show error
+       strict=false: only show if field has content
+    ═══════════════════════════════════════════════════════ */
+    function _mark(el, ok)     { el.classList.toggle('valid', ok); el.classList.toggle('error', !ok); }
+    function _err(id, show)    { document.getElementById(id)?.classList.toggle('show', show); }
+
+    function validateName(el, strict = true) {
+        const ok = el.value.trim().length >= 2;
+        if (strict || el.value.trim()) { _mark(el, ok); _err('errName', !ok); }
+        return ok;
+    }
+
+    function validateNum(el, strict = true) {
+        const raw = el.value.replace(/\D/g,'');
+        const ok  = raw.length === 16 && luhn(raw);
+        if (strict || raw.length >= 4) { _mark(el, ok); _err('errNum', !ok); }
+        return ok;
+    }
+
+    function validateExpiry(el, strict = true) {
+        const raw = el.value.replace(/\D/g,'');
+        let ok    = false;
+        if (raw.length === 4) {
+            const mm   = parseInt(raw.substring(0,2), 10);
+            const yyyy = 2000 + parseInt(raw.substring(2), 10);
+            const now  = new Date();
+            ok = mm >= 1 && mm <= 12
+                 && new Date(yyyy, mm - 1) >= new Date(now.getFullYear(), now.getMonth());
+        }
+        if (strict || raw.length >= 4) { _mark(el, ok); _err('errExpiry', !ok); }
+        return ok;
+    }
+
+    function validateCVV(el, strict = true) {
+        const ok = /^\d{3,4}$/.test(el.value);
+        if (strict || el.value.length >= 3) { _mark(el, ok); _err('errCVV', !ok); }
+        return ok;
+    }
+
+    function validateAllCard() {
+        const n = validateName  (document.getElementById('ccName'));
+        const c = validateNum   (document.getElementById('ccNum'));
+        const e = validateExpiry(document.getElementById('ccExpiry'));
+        const v = validateCVV   (document.getElementById('ccCVV'));
+        return n && c && e && v;
+    }
+
+    /* Luhn algorithm */
+    function luhn(num) {
+        let sum = 0, alt = false;
+        for (let i = num.length - 1; i >= 0; i--) {
+            let d = +num[i];
+            if (alt) { d *= 2; if (d > 9) d -= 9; }
+            sum += d; alt = !alt;
+        }
+        return sum % 10 === 0;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       ORDER PLACEMENT
+    ═══════════════════════════════════════════════════════ */
+    async function placeOrder(e) {
+        e.preventDefault();
+        const form     = e.target;
+        const msgBox   = document.getElementById('checkoutMessage');
+        const isCCard  = form.paymentMethod.value === 'CREDIT_CARD';
+
+        if (isCCard && !validateAllCard()) {
+            // scroll to first error
+            document.querySelector('.co-input.error')
+                ?.scrollIntoView({ behavior:'smooth', block:'center' });
+            return;
+        }
+
+        const btn      = isCCard
+            ? document.getElementById('payNowBtn')
+            : document.getElementById('placeOrderBtn');
+        const origHTML = btn.innerHTML;
+
+        btn.disabled  = true;
+        btn.innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;">
+            <span style="width:16px;height:16px;border:2px solid rgba(0,0,0,.3);border-top-color:#000;
+                         border-radius:50%;animation:spin .65s linear infinite;display:inline-block;"></span>
+            ${isCCard ? 'Processing payment…' : 'Placing order…'}
+        </span>`;
+
+        const addressPayload = {
+            fullName:     form.fullName.value.trim(),
+            phone:        form.phone.value.trim(),
+            addressLine1: form.addressLine1.value.trim(),
+            addressLine2: form.addressLine2.value.trim(),
+            city:         form.city.value.trim(),
+            state:        form.state.value.trim(),
+            postalCode:   form.postalCode.value.trim(),
+            country:      form.country.value.trim(),
+            isDefault:    true
+        };
+
+        try {
+            const saved = await api.post('/addresses', addressPayload);
+            await api.post('/orders/checkout', {
+                addressId:     saved.id,
+                paymentMethod: form.paymentMethod.value,
+                notes:         ''
+            });
+
+            // Success state
+            msgBox.textContent = '✓ Order placed successfully! Redirecting…';
+            msgBox.className   = 'mb-6 rounded-xl px-4 py-3 text-sm bg-green-500/20 border border-green-400/40 text-green-200';
+
+            // Advance steps
+            document.getElementById('step2').classList.replace('active','done');
+            document.getElementById('step2').textContent = '✓';
+            document.getElementById('line2').classList.add('done');
+            document.getElementById('step3').classList.add('active');
+
+            setTimeout(() => { window.location.href = '/my-orders.html'; }, 1600);
+
+        } catch (err) {
+            msgBox.textContent = err.message || 'Something went wrong. Please try again.';
+            msgBox.className   = 'mb-6 rounded-xl px-4 py-3 text-sm bg-red-500/20 border border-red-400/40 text-red-200';
+            btn.disabled  = false;
+            btn.innerHTML = origHTML;
+            msgBox.scrollIntoView({ behavior:'smooth', block:'nearest' });
+        }
+    }
+
+    /* ── Blur listeners + init ── */
+    document.addEventListener('DOMContentLoaded', () => {
+        requireCartAuth();
+        renderAuthLinks();
+        loadCheckoutSummary();
+
+        document.getElementById('ccName')  ?.addEventListener('blur', e => validateName  (e.target));
+        document.getElementById('ccNum')   ?.addEventListener('blur', e => validateNum   (e.target));
+        document.getElementById('ccExpiry')?.addEventListener('blur', e => validateExpiry(e.target));
+        document.getElementById('ccCVV')   ?.addEventListener('blur', e => validateCVV   (e.target));
+
+        // Keep radio label styles in sync
+        document.querySelectorAll('input[name="paymentMethod"]').forEach(r => {
+            r.addEventListener('change', () => {
+                document.querySelectorAll('.pay-radio').forEach(lbl => {
+                    lbl.classList.toggle('selected', lbl.querySelector('input')?.checked);
+                });
+            });
+        });
+    });
+</script>
+
+</body>
 </html>

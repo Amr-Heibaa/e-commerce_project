@@ -114,8 +114,13 @@ async function updateCartItem(itemId, quantity) {
         await removeCartItem(itemId);
         return;
     }
+    // Get the variant ID from the currently loaded cart data
+    const item = getCartItems(currentCart).find(i => (i.id || i.cartItemId) == itemId);
+    const variantId = item?.variantId || item?.productVariantId || 0;
+    const payload = { quantity: quantity };
+    if (variantId) payload.variantId = variantId;
     try {
-        await api.put(`/cart/items/${itemId}`, { quantity });
+        await api.put(`/cart/items/${itemId}`, payload);
         await loadCart();
         if (typeof updateCartBadge === "function") updateCartBadge();
     } catch (error) {
