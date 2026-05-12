@@ -521,5 +521,6 @@ body {
     /* Footer also needs the same left padding so it aligns with content */
     .site-footer {
         padding-left: calc(300px + 64px);
+
     }
 }

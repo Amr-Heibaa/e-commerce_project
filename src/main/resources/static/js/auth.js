@@ -59,4 +59,5 @@ async function register(event) {
 
 function logout() {
     api.logout();
+
 }

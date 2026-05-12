@@ -47,6 +47,7 @@ async function submitRefund() {
         document.getElementById('refund-order-id').value = '';
         document.getElementById('refund-reason').value = '';
         loadMyRefunds();
-    } catch (e) { alert(e.message); }
+    } catch (e) { alert(e.message);
+     }
     btn.disabled = false;
 }

@@ -53,5 +53,6 @@ async function loadMyOrders() {
 
     } catch (error) {
         container.innerHTML = `<p class="text-red-300">${error.message}</p>`;
+
     }
 }

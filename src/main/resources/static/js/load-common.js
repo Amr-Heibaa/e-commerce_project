@@ -192,6 +192,7 @@
     renderAllAuth();
     updateCartBadge();
 
+
     // Legacy support
     window.renderAuthLinks = renderAllAuth;
 })();

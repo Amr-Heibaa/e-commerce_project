@@ -284,5 +284,6 @@ async function addSelectedVariantToCart() {
         alert(err.message);
     } finally {
         if (btn) { btn.disabled = false; btn.textContent = 'Add to Cart'; }
+
     }
 }
