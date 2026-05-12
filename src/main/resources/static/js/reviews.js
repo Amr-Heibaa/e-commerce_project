@@ -1,19 +1,10 @@
-/* formatOrderDate — defined here so reviews work on product-details.html
-   without needing orders.js loaded on the same page */
-function formatOrderDate(dateStr) {
-    if (!dateStr) return "\u2014";
-    try {
-        return new Date(dateStr).toLocaleDateString("en-US", {
-            year: "numeric", month: "short", day: "numeric"
-        });
-    } catch { return dateStr; }
-}
-
 async function loadReviews(productId) {
     const list = document.getElementById('reviews-list');
     if (!list) return;
+
     try {
         const reviews = await api.get(`/reviews/product/${productId}`);
+
         if (!reviews || reviews.length === 0) {
             list.innerHTML = `
                 <div class="glass-card rounded-3xl p-8 text-center">
@@ -22,6 +13,7 @@ async function loadReviews(productId) {
             `;
             return;
         }
+
         list.innerHTML = reviews.map(review => `
             <div class="glass-card rounded-3xl p-6">
                 <div class="flex items-center justify-between mb-4">
@@ -29,17 +21,21 @@ async function loadReviews(productId) {
                         <p class="gold-text text-xs uppercase tracking-[0.25em] mb-1">
                             ${review.username || 'Customer'}
                         </p>
+
                         <div class="flex gap-1">
                             ${[1, 2, 3, 4, 5].map(i => `
                                 <span style="color:${i <= review.rating ? '#F5C842' : '#444'};font-size:1rem">★</span>
                             `).join('')}
                         </div>
                     </div>
+
                     <p class="text-gray-400 text-sm">
                         ${formatOrderDate(review.createdAt)}
                     </p>
                 </div>
+
                 <p class="text-gray-300">${review.comment || ''}</p>
+
                 ${api.isLoggedIn() && api.getUser()?.userId === review.userId ? `
                     <button onclick="deleteReview(${review.id})"
                             class="mt-4 text-sm text-red-400 hover:text-red-300">
@@ -48,6 +44,7 @@ async function loadReviews(productId) {
                 ` : ''}
             </div>
         `).join('');
+
     } catch (error) {
         list.innerHTML = `<p class="text-red-300">${error.message}</p>`;
     }
@@ -56,13 +53,16 @@ async function loadReviews(productId) {
 function initRatingStars() {
     const container = document.getElementById('rating-stars');
     if (!container) return;
+
     let selected = 0;
     container.innerHTML = '';
+
     for (let i = 1; i <= 5; i++) {
         const star = document.createElement('span');
         star.textContent = '★';
         star.style.cssText = 'font-size:1.8rem;cursor:pointer;color:#444;transition:color .15s';
         star.dataset.val = i;
+
         star.onmouseenter = () => highlightStars(i);
         star.onmouseleave = () => highlightStars(selected);
         star.onclick = () => {
@@ -70,8 +70,10 @@ function initRatingStars() {
             document.getElementById('rating-value').value = i;
             highlightStars(i);
         };
+
         container.appendChild(star);
     }
+
     function highlightStars(n) {
         container.querySelectorAll('span').forEach((star, index) => {
             star.style.color = index < n ? '#F5C842' : '#444';
@@ -84,34 +86,43 @@ async function submitReview() {
         window.location.href = '/login.html';
         return;
     }
+
     const rating = Number(document.getElementById('rating-value').value);
     const comment = document.getElementById('review-comment').value.trim();
     const productId = new URLSearchParams(window.location.search).get('id');
+
     if (!rating) {
         alert('Please select a rating');
         return;
     }
+
     const btn = document.getElementById('submit-review-btn');
     btn.disabled = true;
+
     try {
         await api.post('/reviews', {
             productId: Number(productId),
             rating,
             comment
         });
+
         alert('Review submitted.');
         closeReviewModal();
         await loadReviews(productId);
+
     } catch (error) {
         alert(error.message);
     }
+
     btn.disabled = false;
 }
 
 async function deleteReview(id) {
     if (!confirm('Delete this review?')) return;
+
     try {
         await api.delete(`/reviews/${id}`);
+
         const productId = new URLSearchParams(window.location.search).get('id');
         await loadReviews(productId);
     } catch (error) {
