@@ -3,6 +3,9 @@ package com.example.ecommerence_project.controller;
 import com.example.ecommerence_project.dto.request.ProductImageRequest;
 import com.example.ecommerence_project.dto.request.ProductRequest;
 import com.example.ecommerence_project.dto.response.ProductImageResponse;
+import com.example.ecommerence_project.dto.response.FileUploadResponse;
+import com.example.ecommerence_project.service.FileStorageService;
+import org.springframework.web.multipart.MultipartFile;
 import com.example.ecommerence_project.dto.response.ProductResponse;
 import com.example.ecommerence_project.service.ProductService;
 import jakarta.validation.Valid;
@@ -21,7 +24,7 @@ import java.util.List;
 public class AdminProductController {
 
     private final ProductService productService;
-
+    private final FileStorageService fileStorageService;
     @PostMapping
     public ResponseEntity<ProductResponse> create(
             @Valid @RequestBody ProductRequest request) {
@@ -39,6 +42,14 @@ public class AdminProductController {
         return ResponseEntity.ok(productService.getById(id));
     }
 
+    @PostMapping("/upload")
+    public ResponseEntity<FileUploadResponse> uploadImage(
+            @RequestParam("file") MultipartFile file) {
+
+        return ResponseEntity.ok(
+                fileStorageService.uploadProductImage(file)
+        );
+    }
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponse> update(
             @PathVariable Long id,

@@ -92,5 +92,35 @@ const api = {
             method: 'DELETE'
 
         });
+    },
+    async upload(endpoint, formData) {
+
+        const token = this.getToken();
+
+        const headers = {};
+
+        if (token) {
+            headers.Authorization = `Bearer ${token}`;
+        }
+
+        const response = await fetch(
+            `${API_BASE}${endpoint}`,
+            {
+                method: 'POST',
+                headers,
+                body: formData
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data?.message || 'Upload failed'
+            );
+        }
+
+        return data;
     }
+
 };
