@@ -30,6 +30,12 @@ function escapeHtml(str) {
         .replace(/'/g, '&#39;');
 }
 
+function logout() {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('user');
+    window.location.href = '/index.html';
+}
+
 function formatDate(dateStr) {
     if (!dateStr) return '—';
     return new Date(dateStr).toLocaleDateString('en-US', {

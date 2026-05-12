@@ -23,7 +23,7 @@ const api = {
     logout() {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('user');
-        window.location.href = '/login.html';
+        window.location.href = '/index.html';
     },
 
     isLoggedIn() {
