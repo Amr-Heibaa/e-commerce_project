@@ -1,3 +1,6 @@
+// Safe fallback in case orders.js is not loaded on this page
+const formatOrderDate = window.formatOrderDate || (v => v ? new Date(v).toLocaleDateString() : 'N/A');
+
 async function loadReviews(productId) {
     const list = document.getElementById('reviews-list');
     if (!list) return;
