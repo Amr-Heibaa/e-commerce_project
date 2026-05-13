@@ -67,6 +67,344 @@ body {
     background: rgba(212, 175, 55, 0.12);
 }
 
+/* ============ ADMIN PRODUCTS ============ */
+.admin-product-card {
+    padding: 18px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 16px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.admin-product-card:hover {
+    border-color: rgba(212, 175, 55, 0.4);
+    background: rgba(255, 255, 255, 0.015);
+}
+
+.admin-product-summary {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: center;
+}
+
+.admin-product-thumb {
+    width: 76px;
+    height: 86px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid rgba(212, 175, 55, 0.18);
+}
+
+.admin-product-main {
+    min-width: 0;
+}
+
+.admin-product-meta,
+.admin-product-badges,
+.admin-product-actions,
+.admin-product-image-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.admin-product-family {
+    margin: 0;
+    color: var(--gold);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.admin-product-name {
+    margin: 8px 0 2px;
+    overflow: hidden;
+    color: #fff;
+    font-family: serif;
+    font-size: 1.15rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-product-description {
+    margin: 0;
+    overflow: hidden;
+    color: #9ca3af;
+    font-size: 0.86rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-product-badges {
+    margin-top: 10px;
+}
+
+.admin-product-badge {
+    padding: 4px 10px;
+    color: #d1d5db;
+    font-size: 0.75rem;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 999px;
+}
+
+.admin-product-badge-gold {
+    color: var(--gold);
+}
+
+.admin-product-actions {
+    justify-content: flex-end;
+}
+
+.admin-product-action,
+.admin-product-delete {
+    min-width: 104px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.82rem;
+}
+
+.admin-product-delete {
+    color: #fca5a5;
+    background: transparent;
+    border: 1px solid rgba(248, 113, 113, 0.4);
+    transition: background 0.2s ease;
+}
+
+.admin-product-delete:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.admin-product-details {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.admin-product-detail-block + .admin-product-detail-block {
+    margin-top: 16px;
+}
+
+.admin-product-detail-title {
+    margin: 0 0 10px;
+    color: #6b7280;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.admin-product-empty {
+    margin: 10px 0 0;
+    color: #6b7280;
+    font-size: 0.86rem;
+    font-style: italic;
+}
+
+.admin-product-image-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.admin-product-image {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 10px;
+}
+
+.admin-product-primary,
+.admin-product-link,
+.admin-product-danger-link {
+    font-size: 0.75rem;
+}
+
+.admin-product-primary {
+    color: #86efac;
+}
+
+.admin-product-link {
+    color: var(--gold);
+}
+
+.admin-product-danger-link {
+    color: #fca5a5;
+}
+
+.admin-variant-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    border: 1px solid #374151;
+    border-radius: 12px;
+}
+
+.admin-variant-size {
+    color: #fff;
+    font-weight: 600;
+}
+
+.admin-variant-price {
+    color: #9ca3af;
+    font-size: 0.86rem;
+}
+
+.admin-variant-stock,
+.admin-variant-stock-empty {
+    font-size: 0.78rem;
+}
+
+.admin-variant-stock {
+    color: #4ade80;
+}
+
+.admin-variant-stock-empty {
+    color: #f87171;
+}
+
+.admin-variant-delete {
+    padding: 8px 12px;
+    color: #f87171;
+    background: rgba(239, 68, 68, 0.1);
+    border: 0;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+.admin-variant-delete:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+@media (max-width: 900px) {
+    .admin-product-summary {
+        grid-template-columns: 64px minmax(0, 1fr);
+    }
+
+    .admin-product-actions {
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+    }
+
+    .admin-product-thumb {
+        width: 64px;
+        height: 76px;
+    }
+}
+
+/* ============ ADMIN MODAL ============ */
+.admin-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.admin-modal-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.admin-modal-card {
+    width: 90%;
+    max-width: 460px;
+    padding: 32px 36px;
+    background: #0f0f0f;
+    border: 1px solid rgba(202, 138, 4, 0.35);
+    border-radius: 20px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7);
+    transform: scale(0.95);
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.admin-modal-overlay.is-open .admin-modal-card {
+    transform: scale(1);
+}
+
+.admin-modal-title {
+    margin: 0 0 8px;
+    color: #ca8a04;
+    font-family: serif;
+    font-size: 1.35rem;
+}
+
+.admin-modal-copy {
+    margin: 0 0 24px;
+    color: #9ca3af;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.admin-modal-field {
+    display: block;
+    margin-bottom: 16px;
+}
+
+.admin-modal-field-last {
+    margin-bottom: 24px;
+}
+
+.admin-modal-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #9ca3af;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.admin-modal-input {
+    width: 100%;
+    padding: 13px 15px;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(202, 138, 4, 0.18);
+    border-radius: 14px;
+    outline: none;
+}
+
+.admin-modal-input:focus {
+    border-color: #ca8a04;
+    box-shadow: 0 0 0 3px rgba(202, 138, 4, 0.15);
+}
+
+.admin-modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.admin-modal-cancel,
+.admin-modal-submit {
+    padding: 10px 22px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.admin-modal-cancel {
+    color: #ca8a04;
+    background: transparent;
+    border: 1px solid rgba(202, 138, 4, 0.4);
+}
+
+.admin-modal-submit {
+    color: #000;
+    font-weight: 600;
+    background: linear-gradient(135deg, #ca8a04, #a16207);
+    border: 0;
+}
+
 /* ============ SIDEBAR ============ */
 #sideMenu {
     position: fixed;
