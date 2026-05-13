@@ -223,23 +223,79 @@ async function deleteProductImage(productId, imageId) {
     }
 }
 
+function openVariantModal(productId) {
+    return new Promise(resolve => {
+        const overlay = document.getElementById('variantModal');
+        const form = document.getElementById('variantModalForm');
+        const cancelButton = document.getElementById('variantCancel');
+
+        if (!overlay || !form || !cancelButton) {
+            resolve(null);
+            return;
+        }
+
+        form.reset();
+        form.productId.value = productId;
+
+        const close = value => {
+            cancelButton.removeEventListener('click', handleCancel);
+            overlay.removeEventListener('click', handleOverlayClick);
+            form.removeEventListener('submit', handleSubmit);
+            overlay.classList.remove('is-open');
+            overlay.setAttribute('aria-hidden', 'true');
+            setTimeout(() => {
+                resolve(value);
+            }, 220);
+        };
+
+        requestAnimationFrame(() => {
+            overlay.classList.add('is-open');
+            overlay.setAttribute('aria-hidden', 'false');
+            form.size.focus();
+        });
+
+        const handleCancel = () => close(null);
+        const handleOverlayClick = event => {
+            if (event.target === overlay) close(null);
+        };
+
+        const handleSubmit = event => {
+            event.preventDefault();
+
+            const size = form.size.value.trim();
+            const price = Number(form.price.value);
+            const stockQuantity = Number(form.stockQuantity.value);
+
+            if (!size) {
+                showToast('Variant size is required.', 'error');
+                return;
+            }
+
+            if (!Number.isFinite(price) || price <= 0) {
+                showToast('Variant price must be greater than 0.', 'error');
+                return;
+            }
+
+            if (!Number.isInteger(stockQuantity) || stockQuantity < 0) {
+                showToast('Stock must be 0 or more.', 'error');
+                return;
+            }
+
+            close({ productId, size, price, stockQuantity });
+        };
+
+        cancelButton.addEventListener('click', handleCancel);
+        overlay.addEventListener('click', handleOverlayClick);
+        form.addEventListener('submit', handleSubmit);
+    });
+}
+
 async function addVariant(productId) {
-    const size = prompt('Size, e.g. 50ML:');
-    if (!size) return;
-
-    const price = prompt('Price:');
-    if (!price) return;
-
-    const stockQuantity = prompt('Initial stock quantity:');
-    if (stockQuantity === null) return;
+    const variant = await openVariantModal(productId);
+    if (!variant) return;
 
     try {
-        await api.post('/admin/variants', {
-            productId,
-            size,
-            price: Number(price),
-            stockQuantity: Number(stockQuantity)
-        });
+        await api.post('/admin/variants', variant);
 
         showToast('Variant added successfully.', 'success');
         await loadAdminProducts();
