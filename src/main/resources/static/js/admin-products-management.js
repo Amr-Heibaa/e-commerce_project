@@ -3,6 +3,29 @@
    Loaded after admin.js, so it overrides only adminProductRow().
 */
 
+let adminProductCache = [];
+const expandedProductIds = new Set();
+
+async function loadAdminProducts() {
+    const container = document.getElementById('adminProductsTable');
+    if (!container) return;
+    container.innerHTML = skeletonRows(3);
+
+    try {
+        const products = normalizeList(await api.get('/products'));
+        adminProductCache = products;
+
+        if (products.length === 0) {
+            container.innerHTML = _emptyState('No products yet. Add your first product using the form.');
+            return;
+        }
+
+        container.innerHTML = products.map(adminProductRow).join('');
+    } catch (error) {
+        container.innerHTML = _errorState(error.message);
+    }
+}
+
 function adminProductRow(product) {
     const image =
         product.primaryImage?.imageUrl ||
@@ -10,94 +33,123 @@ function adminProductRow(product) {
         product.images?.[0]?.imageUrl ||
         '/images/products/default-perfume.png';
 
-    const safeProduct = JSON.stringify(product).replace(/'/g, "&#39;");
+    const isExpanded = expandedProductIds.has(product.id);
+    const activeVariants = (product.variants || []).filter(variant => variant.active !== false);
 
     return `
-    <div class="border border-yellow-500/20 rounded-2xl p-5 hover:border-yellow-500/40 transition-colors">
-
-        <div class="flex flex-col md:flex-row gap-5">
+    <div class="admin-product-card">
+        <div class="admin-product-summary">
             <img src="${escapeHtml(image)}"
-                 class="w-full md:w-32 h-36 object-cover rounded-xl"
+                 class="admin-product-thumb"
                  onerror="this.src='/images/products/default-perfume.png'" />
 
-            <div class="flex-1">
-                <div class="flex items-center gap-2 mb-2 flex-wrap">
-                    <p class="gold-text text-xs uppercase tracking-[0.25em]">
-                        ${escapeHtml(product.fragranceFamily || 'N/A')}
-                    </p>
+            <div class="admin-product-main">
+                <div class="admin-product-meta">
+                    <p class="admin-product-family">${escapeHtml(product.fragranceFamily || 'N/A')}</p>
                     ${statusBadge(product.active ? 'Active' : 'Inactive')}
                 </div>
 
-                <h3 class="text-lg font-serif">${escapeHtml(product.name)}</h3>
-                <p class="text-gray-400 text-sm mt-1">${escapeHtml(product.description || 'No description')}</p>
+                <h3 class="admin-product-name">${escapeHtml(product.name)}</h3>
+                <p class="admin-product-description">${escapeHtml(product.description || 'No description')}</p>
 
-                <div class="flex flex-wrap gap-2 mt-3">
-                    <span class="rounded-full border border-yellow-500/20 px-3 py-1 text-xs text-gray-300">
+                <div class="admin-product-badges">
+                    <span class="admin-product-badge">
                         Cat. #${escapeHtml(String(product.categoryId || 'N/A'))}
                     </span>
-                    <span class="rounded-full border border-yellow-500/20 px-3 py-1 text-xs gold-text">
-                        ${(product.variants || []).length} variant(s)
+                    <span class="admin-product-badge admin-product-badge-gold">
+                        ${activeVariants.length} variant(s)
                     </span>
-                    <span class="rounded-full border border-yellow-500/20 px-3 py-1 text-xs text-gray-300">
+                    <span class="admin-product-badge">
                         ${(product.images || []).length} image(s)
                     </span>
                 </div>
             </div>
 
-            <div class="flex md:flex-col gap-3">
-                <button onclick='editAdminProduct(${safeProduct})'
-                        class="outline-gold rounded-xl px-4 py-2 text-sm">
+            <div class="admin-product-actions">
+                <button onclick="toggleProductDetails(${product.id})"
+                        class="outline-gold admin-product-action">
+                    ${isExpanded ? 'Hide' : 'Details'}
+                </button>
+
+                <button onclick="editAdminProductById(${product.id})"
+                        class="outline-gold admin-product-action">
                     Edit
                 </button>
 
                 <button onclick="addProductImage(${product.id})"
-                        class="outline-gold rounded-xl px-4 py-2 text-sm">
+                        class="outline-gold admin-product-action">
                     Add Image
                 </button>
 
                 <button onclick="addVariant(${product.id})"
-                        class="outline-gold rounded-xl px-4 py-2 text-sm">
+                        class="outline-gold admin-product-action">
                     Add Variant
                 </button>
 
                 <button onclick="deleteAdminProduct(${product.id})"
-                        class="rounded-xl px-4 py-2 text-sm border border-red-400/40 text-red-300">
+                        class="admin-product-delete">
                     Delete
                 </button>
             </div>
         </div>
 
-        ${renderProductImages(product)}
-        ${renderProductVariants(product)}
+        <div id="productDetails-${product.id}" class="admin-product-details ${isExpanded ? '' : 'hidden'}">
+            ${renderProductImages(product)}
+            ${renderProductVariants(product)}
+        </div>
     </div>`;
+}
+
+function toggleProductDetails(productId) {
+    if (expandedProductIds.has(productId)) {
+        expandedProductIds.delete(productId);
+    } else {
+        expandedProductIds.add(productId);
+    }
+
+    const container = document.getElementById('adminProductsTable');
+    if (container) {
+        container.innerHTML = adminProductCache.map(adminProductRow).join('');
+    }
+}
+
+function editAdminProductById(productId) {
+    const product = adminProductCache.find(item => item.id === productId);
+
+    if (!product) {
+        showToast('Product data is not loaded. Refresh and try again.', 'error');
+        return;
+    }
+
+    editAdminProduct(product);
 }
 
 function renderProductImages(product) {
     if (!product.images || product.images.length === 0) {
-        return `<p class="text-gray-500 text-sm mt-5">No images yet.</p>`;
+        return `<p class="admin-product-empty">No images yet.</p>`;
     }
 
     return `
-    <div class="mt-5 pt-5 border-t border-yellow-500/10">
-        <p class="text-xs uppercase tracking-widest text-gray-500 mb-3">Images</p>
+    <div class="admin-product-detail-block">
+        <p class="admin-product-detail-title">Images</p>
 
-        <div class="flex flex-wrap gap-4">
+        <div class="admin-product-image-list">
             ${product.images.map(img => `
                 <div>
                     <img src="${escapeHtml(img.imageUrl)}"
-                         class="w-24 h-24 rounded-xl object-cover border border-yellow-500/20"
+                         class="admin-product-image"
                          onerror="this.src='/images/products/default-perfume.png'" />
 
-                    <div class="flex gap-2 mt-2">
+                    <div class="admin-product-image-actions">
                         ${
         img.isPrimary
-            ? `<span class="text-xs text-green-300">Primary</span>`
+            ? `<span class="admin-product-primary">Primary</span>`
             : `<button onclick="setPrimaryImage(${product.id}, ${img.id})"
-                                           class="text-xs gold-text">Set Primary</button>`
+                       class="admin-product-link">Set Primary</button>`
     }
 
                         <button onclick="deleteProductImage(${product.id}, ${img.id})"
-                                class="text-xs text-red-300">
+                                class="admin-product-danger-link">
                             Delete
                         </button>
                     </div>
@@ -114,39 +166,43 @@ function renderProductVariants(product) {
 
     if (!activeVariants.length) {
         return `
-            <div class="text-gray-500 text-sm italic py-2">
+            <div class="admin-product-empty">
                 No active variants
             </div>
         `;
     }
 
-    return activeVariants.map(variant => `
-        <div class="variant-row flex items-center justify-between border border-gray-700 rounded-xl p-3 mb-2">
+    return `
+    <div class="admin-product-detail-block">
+        <p class="admin-product-detail-title">Variants</p>
+        ${activeVariants.map(variant => `
+            <div class="variant-row admin-variant-row">
+                <div>
+                    <div class="admin-variant-size">
+                        ${escapeHtml(variant.size)}
+                    </div>
 
-            <div>
-                <div class="font-medium text-white">
-                    ${variant.size}
+                    <div class="admin-variant-price">
+                        $${Number(variant.price).toFixed(2)}
+                    </div>
+
+                    <div class="${variant.stockQuantity > 0 ? 'admin-variant-stock' : 'admin-variant-stock-empty'}">
+                        Stock: ${variant.stockQuantity}
+                    </div>
                 </div>
 
-                <div class="text-sm text-gray-400">
-                    $${Number(variant.price).toFixed(2)}
-                </div>
+                <button
+                    onclick="deleteVariant(${variant.id}, ${product.id})"
+                    class="admin-variant-delete"
+                >
+                    Delete Variant
+                </button>
 
-                <div class="text-xs ${variant.stockQuantity > 0 ? 'text-green-400' : 'text-red-400'}">
-                    Stock: ${variant.stockQuantity}
-                </div>
             </div>
-
-            <button
-                onclick="deleteVariant(${variant.id}, ${product.id})"
-                class="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-2 rounded-lg transition"
-            >
-                Delete Variant
-            </button>
-
-        </div>
-    `).join('');
+        `).join('')}
+    </div>`;
 }
+
 async function addProductImage(productId) {
 
     const input =
