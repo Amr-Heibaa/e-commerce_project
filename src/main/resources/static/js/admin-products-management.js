@@ -108,55 +108,45 @@ function renderProductImages(product) {
 }
 
 function renderProductVariants(product) {
-    return `
-    <div class="mt-5 pt-5 border-t border-yellow-500/10">
-        <div class="flex justify-between items-center mb-3">
-            <p class="text-xs uppercase tracking-widest text-gray-500">Variants</p>
 
-            <button onclick="addVariant(${product.id})"
-                    class="gold-btn rounded-xl px-4 py-2 text-xs">
-                Add Variant
-            </button>
-        </div>
+    const activeVariants = (product.variants || [])
+        .filter(variant => variant.active !== false);
 
-        ${
-        product.variants && product.variants.length
-            ? product.variants.map(v => `
-                    <div class="border border-yellow-500/20 rounded-xl p-4 mb-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                        <div>
-                            <p class="font-semibold">${escapeHtml(v.size)}</p>
-                            <p class="gold-text text-sm">$${Number(v.price || 0).toFixed(2)}</p>
-                            <p class="text-gray-400 text-xs">Stock: ${v.stockQuantity}</p>
-                        </div>
-
-                        <div class="flex flex-wrap gap-2">
-                            <button onclick="editVariant(${v.id}, ${product.id}, '${escapeHtml(v.size)}', ${v.price}, ${v.stockQuantity})"
-                                    class="outline-gold rounded-xl px-3 py-2 text-xs">
-                                Edit
-                            </button>
-
-                            <button onclick="updateVariantStock(${v.id}, ${v.stockQuantity})"
-                                    class="outline-gold rounded-xl px-3 py-2 text-xs">
-                                Stock
-                            </button>
-
-                            <button onclick="viewInventoryLogs(${v.id})"
-                                    class="outline-gold rounded-xl px-3 py-2 text-xs">
-                                Logs
-                            </button>
-
-                            <button onclick="deleteVariant(${v.id})"
-                                    class="rounded-xl px-3 py-2 text-xs border border-red-400/40 text-red-300">
-                                Delete
-                            </button>
-                        </div>
-                    </div>
-                `).join('')
-            : `<p class="text-gray-500 text-sm">No variants yet. Click “Add Variant”.</p>`
+    if (!activeVariants.length) {
+        return `
+            <div class="text-gray-500 text-sm italic py-2">
+                No active variants
+            </div>
+        `;
     }
-    </div>`;
-}
 
+    return activeVariants.map(variant => `
+        <div class="variant-row flex items-center justify-between border border-gray-700 rounded-xl p-3 mb-2">
+
+            <div>
+                <div class="font-medium text-white">
+                    ${variant.size}
+                </div>
+
+                <div class="text-sm text-gray-400">
+                    $${Number(variant.price).toFixed(2)}
+                </div>
+
+                <div class="text-xs ${variant.stockQuantity > 0 ? 'text-green-400' : 'text-red-400'}">
+                    Stock: ${variant.stockQuantity}
+                </div>
+            </div>
+
+            <button
+                onclick="deleteVariant(${variant.id}, ${product.id})"
+                class="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-2 rounded-lg transition"
+            >
+                Delete Variant
+            </button>
+
+        </div>
+    `).join('');
+}
 async function addProductImage(productId) {
 
     const input =
@@ -283,16 +273,31 @@ async function editVariant(variantId, productId, oldSize, oldPrice, oldStock) {
     }
 }
 
-async function deleteVariant(variantId) {
-    const confirmed = await adminConfirm('Delete/deactivate this variant?');
+async function deleteVariant(variantId, productId) {
+
+    const confirmed = confirm(
+        'Are you sure you want to delete this variant?'
+    );
+
     if (!confirmed) return;
 
     try {
+
+        console.log('Deleting variant:', variantId);
+
         await api.delete(`/admin/variants/${variantId}`);
+
         showToast('Variant deleted.', 'success');
         await loadAdminProducts();
-    } catch (e) {
-        showToast(e.message, 'error');
+
+    } catch (error) {
+
+        console.error('Delete variant failed:', error);
+
+        showToast(
+            error.message || 'Failed to delete variant',
+            'error'
+        );
     }
 }
 
