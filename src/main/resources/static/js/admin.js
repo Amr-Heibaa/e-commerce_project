@@ -368,7 +368,12 @@ async function deleteCategory(id) {
         showToast('Category deleted.', 'success');
         await loadCategories();
     } catch (error) {
-        showToast(error.message, 'error');
+        const msg = error?.response?.data?.message
+            || error?.data?.message
+            || error?.message
+            || 'Failed to delete category. It may have linked products.';
+        showToast(msg, 'error');
+        console.error('Delete category error:', error);
     }
 }
 
@@ -556,10 +561,40 @@ async function loadAdminOrders() {
     }
 }
 
+function resolveCustomerName(order) {
+    // Try every common shape Spring Boot APIs return
+    const u = order.user || order.customer || {};
+
+    // 1. Flat top-level fields (what this API actually returns)
+    if (order.userFullName)  return order.userFullName;
+    if (order.userName || order.customerName) return order.userName || order.customerName;
+
+    // 2. Nested user object fullName
+    if (u.fullName)   return u.fullName;
+
+    // 2. firstName + lastName on the nested object
+    const first = u.firstName || u.first_name || '';
+    const last  = u.lastName  || u.last_name  || '';
+    if (first || last) return `${first} ${last}`.trim();
+
+    // 3. firstName + lastName flat on the order itself
+    const oFirst = order.firstName || order.first_name || '';
+    const oLast  = order.lastName  || order.last_name  || '';
+    if (oFirst || oLast) return `${oFirst} ${oLast}`.trim();
+
+    // 4. Fall back to email username portion
+    const email = u.email || order.userEmail || order.email || '';
+    if (email) return email.split('@')[0];
+
+    return 'Unknown Customer';
+}
+
 function adminOrderRow(order) {
     const status   = order.status || 'PENDING';
     const total    = order.totalAmount || order.total || 0;
     const itemCount = (order.items || order.orderItems || []).length;
+    const customerName = resolveCustomerName(order);
+    const customerEmail = (order.user || order.customer || {}).email || order.userEmail || order.email || '';
 
     return `
     <div class="border border-yellow-500/20 rounded-2xl p-5 hover:border-yellow-500/40 transition-colors">
@@ -575,10 +610,10 @@ function adminOrderRow(order) {
                 <div>
                     <p class="gold-text text-xs uppercase tracking-[0.25em] mb-1">Order #${escapeHtml(String(order.id))}</p>
                     <h3 class="text-lg font-serif">
-                        ${escapeHtml(order.user?.fullName || order.userName || 'Customer')}
+                        ${escapeHtml(customerName)}
                     </h3>
                     <p class="text-gray-400 text-sm mt-1">
-                        ${escapeHtml(order.user?.email || order.userEmail || '')}
+                        ${escapeHtml(customerEmail)}
                         ${order.createdAt ? `<span class="ml-2 text-gray-500">· ${formatDate(order.createdAt)}</span>` : ''}
                     </p>
                 </div>

@@ -3,7 +3,9 @@ package com.example.ecommerence_project.service.impl;
 import com.example.ecommerence_project.dto.request.CategoryRequest;
 import com.example.ecommerence_project.dto.response.CategoryResponse;
 import com.example.ecommerence_project.entity.Category;
+import com.example.ecommerence_project.entity.Product;
 import com.example.ecommerence_project.exception.UnauthorizedException;
+import com.example.ecommerence_project.repository.ProductRepository;
 import com.example.ecommerence_project.mapper.CategoryMapper;
 import com.example.ecommerence_project.repository.CategoryRepository;
 import com.example.ecommerence_project.service.CategoryService;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final ProductRepository productRepository;
 
     @Override
     public List<CategoryResponse> getAllActiveCategories() {
@@ -62,7 +65,15 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void deleteCategory(Long id) {
-        categoryRepository.delete(findOrThrow(id));
+        Category category = findOrThrow(id);
+
+        // Unlink all products from this category instead of deleting them
+        for (Product product : category.getProducts()) {
+            product.setCategory(null);
+        }
+        productRepository.saveAll(category.getProducts());
+
+        categoryRepository.delete(category);
     }
 
     @Override
