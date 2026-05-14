@@ -39,6 +39,7 @@ public class ProductMapper {
 
         if (product.getCategory() != null) {
             response.setCategoryId(product.getCategory().getId());
+            response.setCategoryName(product.getCategory().getName());
         }
 
         // IMAGES

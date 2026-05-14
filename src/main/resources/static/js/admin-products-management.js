@@ -54,7 +54,7 @@ function adminProductRow(product) {
 
                 <div class="admin-product-badges">
                     <span class="admin-product-badge">
-                        Cat. #${escapeHtml(String(product.categoryId || 'N/A'))}
+                        ${escapeHtml(product.categoryName || 'No category')}
                     </span>
                     <span class="admin-product-badge admin-product-badge-gold">
                         ${activeVariants.length} variant(s)

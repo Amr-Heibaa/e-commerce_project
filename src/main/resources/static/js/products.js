@@ -11,6 +11,10 @@ function toggleFragranceMenu() {
 
 let allProducts = [];
 
+function normalizeSlug(value) {
+    return String(value || '').trim().toLowerCase();
+}
+
 function renderAuthLinks() {
     const container = document.getElementById('authLinks');
     if (!container) return;
@@ -161,33 +165,59 @@ async function loadProducts() {
         allProducts = (allProducts.content || allProducts).filter(p => p.active !== false);
         populateFamilyFilter(allProducts);
 
-        // Apply gender filter from URL param if present
         const params = new URLSearchParams(window.location.search);
+        const categoryId = params.get('categoryId');
+        const category = params.get('category');
         const gender = params.get('gender');
-        if (gender) {
-            const genderSelect = document.getElementById('genderFilter');
-            if (genderSelect) genderSelect.value = gender;
-            renderProducts(allProducts.filter(p =>
-                (p.gender || p.targetGender || '').toLowerCase() === gender.toLowerCase()
-            ));
-            // Highlight active gender in sidebar
-            document.querySelectorAll('.side-sublink').forEach(link => {
-                const url = new URL(link.href, window.location.origin);
-                if (url.searchParams.get('gender') === gender) {
-                    link.style.color = '#fbbf24';
-                    // Also open the submenu
-                    const submenu = document.getElementById('fragranceSubmenu');
-                    const chevron = document.getElementById('fragranceChevron');
-                    if (submenu) submenu.classList.add('open');
-                    if (chevron) chevron.classList.add('open');
+
+        if (categoryId || category || gender) {
+            const selectedCategory = category || gender;
+            const filtered = allProducts.filter(product => {
+                if (categoryId) {
+                    return Number(product.categoryId) === Number(categoryId);
                 }
+
+                return normalizeSlug(product.categoryName) === normalizeSlug(selectedCategory);
             });
+
+            updateProductsHeading(selectedCategory || `Category #${categoryId}`);
+            highlightActiveCategory(selectedCategory, categoryId);
+            renderProducts(filtered);
         } else {
             renderProducts(allProducts);
         }
     } catch (error) {
         grid.innerHTML = `<p class="text-red-300 col-span-4">${error.message}</p>`;
     }
+}
+
+function updateProductsHeading(categoryName) {
+    if (!categoryName) return;
+
+    const heading = document.querySelector('main h1');
+    if (heading) {
+        heading.textContent = `${categoryName} Perfumes`;
+    }
+}
+
+function highlightActiveCategory(categoryName, categoryId) {
+    document.querySelectorAll('.side-sublink').forEach(link => {
+        const url = new URL(link.href, window.location.origin);
+        const linkCategory = url.searchParams.get('category');
+        const linkCategoryId = url.searchParams.get('categoryId');
+
+        if (
+            (categoryName && normalizeSlug(linkCategory) === normalizeSlug(categoryName)) ||
+            (categoryId && Number(linkCategoryId) === Number(categoryId))
+        ) {
+            link.classList.add('side-sublink-active');
+
+            const submenu = document.getElementById('fragranceSubmenu');
+            const chevron = document.getElementById('fragranceChevron');
+            if (submenu) submenu.classList.add('open');
+            if (chevron) chevron.classList.add('open');
+        }
+    });
 }
 
 function renderProducts(products) {
@@ -217,9 +247,15 @@ function populateFamilyFilter(products) {
 function filterProducts() {
     const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
     const family = document.getElementById('familyFilter')?.value || '';
+    const params = new URLSearchParams(window.location.search);
+    const categoryId = params.get('categoryId');
+    const category = params.get('category') || params.get('gender');
+
     const filtered = allProducts.filter(p =>
         (!search || (p.name?.toLowerCase().includes(search) || (p.description || '').toLowerCase().includes(search) || (p.fragranceFamily || '').toLowerCase().includes(search)))
         && (!family || p.fragranceFamily === family)
+        && (!categoryId || Number(p.categoryId) === Number(categoryId))
+        && (!category || normalizeSlug(p.categoryName) === normalizeSlug(category))
     );
     renderProducts(filtered);
 }

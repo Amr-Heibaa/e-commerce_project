@@ -15,6 +15,7 @@ public class ProductResponse {
     private Boolean active;
     private FragranceFamily fragranceFamily;
     private Long categoryId;
+    private String categoryName;
     private ProductImageResponse primaryImage;           // ← added
     private List<ProductImageResponse> images;          // ← added
     private List<ProductVariantResponse> variants;

@@ -252,37 +252,54 @@ async function loadCategories() {
     container.innerHTML = skeletonRows(3);
 
     try {
-        const categories = normalizeList(await api.get('/categories'));
+        const [categoriesResponse, productsResponse] = await Promise.all([
+            api.get('/categories'),
+            api.get('/products')
+        ]);
+        const categories = normalizeList(categoriesResponse);
+        const products = normalizeList(productsResponse);
 
         if (categories.length === 0) {
             container.innerHTML = _emptyState('No categories yet. Add your first one using the form.');
             return;
         }
-        container.innerHTML = categories.map(categoryRow).join('');
+        container.innerHTML = categories.map((category, index) => {
+            const categoryProducts = products.filter(product => product.categoryId === category.id);
+            return categoryRow(category, categoryProducts, index + 1);
+        }).join('');
     } catch (error) {
         container.innerHTML = _errorState(error.message);
     }
 }
 
-function categoryRow(category) {
+function categoryRow(category, products = [], displayNumber = category.id) {
     const safeCategory = JSON.stringify(category).replace(/'/g, "&#39;");
     return `
-    <div class="border border-yellow-500/20 rounded-2xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 hover:border-yellow-500/40 transition-colors">
-        <div class="flex items-start gap-4">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                 style="background:rgba(202,138,4,.12);border:1px solid rgba(202,138,4,.2);">
+    <div class="admin-category-card">
+        <div class="admin-category-summary">
+            <div class="admin-category-icon">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                     stroke-width="1.5" style="color:#ca8a04;">
+                     stroke-width="1.5">
                     <path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/>
                 </svg>
             </div>
-            <div>
-                <p class="gold-text text-xs uppercase tracking-[0.25em] mb-1">Category #${escapeHtml(String(category.id))}</p>
+            <div class="admin-category-main">
+                <p class="gold-text text-xs uppercase tracking-[0.25em] mb-1">Category #${escapeHtml(String(displayNumber))}</p>
                 <h3 class="text-lg font-serif">${escapeHtml(category.name)}</h3>
                 <p class="text-gray-400 text-sm mt-1">${escapeHtml(category.description || 'No description')}</p>
+                <p class="admin-category-count">${products.length} product${products.length !== 1 ? 's' : ''}</p>
+                <div class="admin-category-products">
+                    ${products.length
+                        ? products.map(product => `
+                            <a href="/product-details.html?id=${product.id}" class="admin-category-product-pill">
+                                ${escapeHtml(product.name)}
+                            </a>
+                        `).join('')
+                        : '<span class="admin-category-empty">No linked products</span>'}
+                </div>
             </div>
         </div>
-        <div class="flex gap-3 flex-shrink-0">
+        <div class="admin-category-actions">
             <button onclick='editCategory(${safeCategory})' class="outline-gold rounded-xl px-4 py-2 text-sm flex items-center gap-2">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
