@@ -178,7 +178,10 @@
                     </div>
                     <div>
                         <label class="co-label">Phone *</label>
-                        <input name="phone" required placeholder="+20 100 000 0000" class="co-input" />
+                        <input name="phone" required placeholder="01012345678" class="co-input"
+                               maxlength="11" inputmode="numeric" pattern="\d{11}"
+                               oninput="onPhoneInput(this)" onblur="validatePhone(this,true)" />
+                        <p class="field-err" id="errPhone">Phone must be exactly 11 numbers.</p>
                     </div>
                 </div>
 
@@ -203,7 +206,10 @@
                     </div>
                     <div>
                         <label class="co-label">Postal Code *</label>
-                        <input name="postalCode" required placeholder="12345" class="co-input" />
+                        <input name="postalCode" required placeholder="12345" class="co-input"
+                               maxlength="6" inputmode="numeric" pattern="\d{1,6}"
+                               oninput="onPostalInput(this)" onblur="validatePostalCode(this,true)" />
+                        <p class="field-err" id="errPostalCode">Postal code must be numbers only and at most 6 digits.</p>
                     </div>
                 </div>
 
@@ -471,6 +477,16 @@
         if (el.value.length >= 3) validateCVV(el, false);
     }
 
+    function onPhoneInput(el) {
+        el.value = el.value.replace(/\D/g,'').substring(0,11);
+        if (el.value.length >= 1) validatePhone(el, false);
+    }
+
+    function onPostalInput(el) {
+        el.value = el.value.replace(/\D/g,'').substring(0,6);
+        if (el.value.length >= 1) validatePostalCode(el, false);
+    }
+
     function toggleCVV() {
         const inp = document.getElementById('ccCVV');
         inp.type  = inp.type === 'password' ? 'text' : 'password';
@@ -528,6 +544,24 @@
         return ok;
     }
 
+    function validatePhone(el, strict = true) {
+        const ok = /^\d{11}$/.test(el.value);
+        if (strict || el.value.length > 0) { _mark(el, ok); _err('errPhone', !ok); }
+        return ok;
+    }
+
+    function validatePostalCode(el, strict = true) {
+        const ok = /^\d{1,6}$/.test(el.value);
+        if (strict || el.value.length > 0) { _mark(el, ok); _err('errPostalCode', !ok); }
+        return ok;
+    }
+
+    function validateShipping() {
+        const phoneOk = validatePhone(document.querySelector('input[name="phone"]'));
+        const postalOk = validatePostalCode(document.querySelector('input[name="postalCode"]'));
+        return phoneOk && postalOk;
+    }
+
     function validateAllCard() {
         const n = validateName  (document.getElementById('ccName'));
         const c = validateNum   (document.getElementById('ccNum'));
@@ -555,6 +589,12 @@
         const form     = e.target;
         const msgBox   = document.getElementById('checkoutMessage');
         const isCCard  = form.paymentMethod.value === 'CREDIT_CARD';
+
+        if (!validateShipping()) {
+            document.querySelector('.co-input.error')
+                ?.scrollIntoView({ behavior:'smooth', block:'center' });
+            return;
+        }
 
         if (isCCard && !validateAllCard()) {
             // scroll to first error
