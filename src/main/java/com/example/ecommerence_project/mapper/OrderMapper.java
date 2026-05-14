@@ -8,6 +8,7 @@ import com.example.ecommerence_project.entity.Address;
 import com.example.ecommerence_project.entity.Order;
 import com.example.ecommerence_project.entity.OrderItem;
 import com.example.ecommerence_project.entity.Payment;
+import com.example.ecommerence_project.entity.ProductImage;
 import com.example.ecommerence_project.entity.ProductVariant;
 import org.springframework.stereotype.Component;
 
@@ -60,10 +61,18 @@ public class OrderMapper {
      */
     public OrderItemResponse toItemResponse(OrderItem item) {
         ProductVariant variant = item.getProductVariant();
+        String imageUrl = variant.getProduct().getImages().stream()
+                .filter(img -> Boolean.TRUE.equals(img.getIsPrimary()))
+                .findFirst()
+                .or(() -> variant.getProduct().getImages().stream().findFirst())
+                .map(ProductImage::getImageUrl)
+                .orElse("/images/products/default-perfume.png");
+
         return OrderItemResponse.builder()
                 .id(item.getId())
                 .variantId(variant.getId())
                 .productName(variant.getProduct().getName())
+                .imageUrl(imageUrl)
                 .variantSize(variant.getSize())
                 .quantity(item.getQuantity())
                 .unitPrice(item.getUnitPrice())
