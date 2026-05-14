@@ -884,11 +884,7 @@ function adminRefundRow(refund) {
                     ${status === 'REJECTED' ? 'disabled' : ''}>
                 ✕ Reject
             </button>
-            ${status !== 'PENDING' ? `
-            <button onclick="updateRefundStatus(${id}, 'PENDING')"
-                    class="rounded-xl px-4 py-2 text-sm border border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/10 transition-colors">
-                ↩ Mark Pending
-            </button>` : ''}
+
         </div>
     </div>`;
 }
