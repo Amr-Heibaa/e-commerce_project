@@ -11,6 +11,16 @@
         .fade-up { animation: fadeUp .5s ease both; }
         .order-tab { padding:10px 22px;border-radius:30px;font-size:.75rem;text-transform:uppercase;letter-spacing:.15em;cursor:pointer;border:1px solid rgba(202,138,4,.2);background:transparent;color:#9ca3af;transition:all .2s; }
         .order-tab.active,.order-tab:hover { background:rgba(202,138,4,.12);border-color:rgba(202,138,4,.5);color:#ca8a04; }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
     </style>
 </head>
 <body class="bg-black text-white">
@@ -31,20 +41,98 @@
 <script src="/js/load-common.js"></script>
 <script src="/js/products.js"></script>
 <script>
-    let _allOrders=[],_activeFilter='';
+    let _allOrders = [],
+        _activeFilter = '',
+        _myRefunds = [];
+
     function requireOrderAuth(){if(!api.isLoggedIn())window.location.href='/login.html';}
     function formatOrderDate(d){if(!d)return'—';return new Date(d).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});}
     function money(v){return'$'+Number(v||0).toFixed(2);}
     const statusMap={PENDING:'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',PAID:'bg-blue-500/20 text-blue-300 border-blue-500/30',SHIPPED:'bg-purple-500/20 text-purple-300 border-purple-500/30',DELIVERED:'bg-green-500/20 text-green-300 border-green-500/30',CANCELLED:'bg-red-500/20 text-red-300 border-red-500/30'};
     function filterOrders(status,btn){_activeFilter=status;document.querySelectorAll('.order-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderOrders(status?_allOrders.filter(o=>o.status===status):_allOrders);}
     function renderOrders(orders){
+
+
         const c=document.getElementById('ordersContainer');if(!c)return;
         if(!orders||orders.length===0){c.innerHTML=`<div class="glass-card rounded-3xl p-12 text-center"><div style="font-size:3rem;margin-bottom:16px;">📦</div><h2 class="text-2xl font-serif gold-text mb-3">No orders yet</h2><p class="text-gray-400 mb-6">Discover your next signature scent.</p><a href="/products.html" class="gold-btn inline-block rounded-xl px-8 py-3">Shop Collection</a></div>`;return;}
         c.innerHTML=orders.map(order=>{
-            const items=order.items||order.orderItems||[],status=order.status||'PENDING',cls=statusMap[status]||'bg-gray-500/20 text-gray-300',total=order.totalAmount||order.total||0;
-            return`<div class="glass-card rounded-3xl p-6"><div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5"><div><p class="gold-text text-xs uppercase tracking-[0.25em] mb-1">Order #${order.id}</p><p class="text-gray-500 text-sm">${formatOrderDate(order.createdAt)}</p></div><div class="flex items-center gap-4"><span class="text-xl font-serif gold-text">${money(total)}</span><span class="rounded-full px-3 py-1 text-xs border ${cls}">${status}</span></div></div>${items.length?`<div class="space-y-3 mb-5 pt-4" style="border-top:1px solid rgba(202,138,4,.08);">${items.map(it=>{const n=it.productName||it.name||'Perfume',sz=it.size||it.variantSize||'',p=Number(it.price||it.unitPrice||0),q=it.quantity||1,im=it.imageUrl||it.productImage||'/images/products/default-perfume.png';return`<div class="flex items-center gap-4"><img src="${im}" style="width:52px;height:60px;object-fit:cover;border-radius:10px;"><div class="flex-1"><p class="font-medium text-sm">${n}</p><p class="text-gray-500 text-xs">${sz} × ${q}</p></div><p class="gold-text text-sm">${money(p*q)}</p></div>`}).join('')}</div>`:''}<div class="flex flex-wrap gap-3 pt-4" style="border-top:1px solid rgba(202,138,4,.08);">${status==='DELIVERED'?`<a href="/products.html" class="outline-gold rounded-xl px-4 py-2 text-sm">Buy Again</a>`:''}${status==='PAID'||status==='DELIVERED'?`<button onclick="openRefundModal(${order.id})" class="rounded-xl px-4 py-2 text-sm border border-red-400/30 text-red-300">Request Refund</button>`:''}</div></div>`}).join('');
+            const items = order.items || order.orderItems || [],
+      status = order.status || 'PENDING',
+      cls = statusMap[status] || 'bg-gray-500/20 text-gray-300',
+      total = order.totalAmount || order.total || 0;
+
+const refund = _myRefunds.find(
+    r => Number(r.orderId) === Number(order.id)
+);
+
+const hasRefund = !!refund;
+const refundStatus = refund?.status || 'PENDING';
+            return`<div class="glass-card rounded-3xl p-6"><div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5"><div><p class="gold-text text-xs uppercase tracking-[0.25em] mb-1">Order #${order.id}</p><p class="text-gray-500 text-sm">${formatOrderDate(order.createdAt)}</p></div><div class="flex items-center gap-4"><span class="text-xl font-serif gold-text">${money(total)}</span><span class="rounded-full px-3 py-1 text-xs border ${cls}">${status}</span></div></div>${items.length?`<div class="space-y-3 mb-5 pt-4" style="border-top:1px solid rgba(202,138,4,.08);">${items.map(it=>{const n=it.productName||it.name||'Perfume',sz=it.size||it.variantSize||'',p=Number(it.price||it.unitPrice||0),q=it.quantity||1,im=it.imageUrl||it.productImage||'/images/products/default-perfume.png';return`<div class="flex items-center gap-4"><img src="${im}" style="width:52px;height:60px;object-fit:cover;border-radius:10px;"><div class="flex-1"><p class="font-medium text-sm">${n}</p><p class="text-gray-500 text-xs">${sz} × ${q}</p></div><p class="gold-text text-sm">${money(p*q)}</p></div>`}).join('')}</div>`:''}<div class="flex flex-wrap gap-3 pt-4" style="border-top:1px solid rgba(202,138,4,.08);">${status==='DELIVERED'?`<a href="/products.html" class="outline-gold rounded-xl px-4 py-2 text-sm">Buy Again</a>`:''}${
+(status === 'PAID' || status === 'DELIVERED')
+? hasRefund
+? `
+<span class="rounded-xl px-4 py-2 text-sm border border-yellow-500/30 text-yellow-300 bg-yellow-500/10">
+    Refund Requested
+</span>
+
+<span class="rounded-xl px-4 py-2 text-xs border border-gray-500/30 text-gray-400">
+    ${refundStatus}
+</span>
+`
+: `
+<button onclick="openRefundModal(${order.id})"
+    class="rounded-xl px-4 py-2 text-sm border border-red-400/30 text-red-300">
+    Request Refund
+</button>
+`
+: ''
+}</div></div>`}).join('');
     }
-    async function loadMyOrders(){const c=document.getElementById('ordersContainer');c.innerHTML=`<div class="glass-card rounded-3xl p-8 text-center"><div style="width:32px;height:32px;border:2px solid rgba(202,138,4,.3);border-top-color:#ca8a04;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto;"></div></div>`;try{_allOrders=await api.get('/orders/my');if(!Array.isArray(_allOrders))_allOrders=_allOrders?.content||[];_allOrders.sort((a,b)=>(b.id||0)-(a.id||0));renderOrders(_allOrders);}catch(e){c.innerHTML=`<p class="text-red-300">${e.message}</p>`;}}
+    async function loadMyOrders() {
+
+        const c = document.getElementById('ordersContainer');
+
+        c.innerHTML = `
+        <div class="glass-card rounded-3xl p-8 text-center">
+            <div style="
+                width:32px;
+                height:32px;
+                border:2px solid rgba(202,138,4,.3);
+                border-top-color:#ca8a04;
+                border-radius:50%;
+                animation:spin .7s linear infinite;
+                margin:0 auto;
+            "></div>
+        </div>
+    `;
+
+        try {
+
+            const [ordersRes, refundsRes] = await Promise.all([
+                api.get('/orders/my'),
+                api.get('/refunds/my')
+            ]);
+
+            _allOrders = Array.isArray(ordersRes)
+                ? ordersRes
+                : ordersRes?.content || [];
+
+            _myRefunds = Array.isArray(refundsRes)
+                ? refundsRes
+                : refundsRes?.content || [];
+
+            _allOrders.sort((a, b) => (b.id || 0) - (a.id || 0));
+
+            renderOrders(_allOrders);
+
+        } catch (e) {
+
+            c.innerHTML = `
+            <p class="text-red-300">${e.message}</p>
+        `;
+        }
+    }
+
     function openRefundModal(id) {
         const oldModal = document.getElementById('refundModal');
         if (oldModal) oldModal.remove();
@@ -64,12 +152,12 @@
                 placeholder="Write your refund reason..."></textarea>
 
             <div class="flex justify-end gap-3 mt-6">
-                <button onclick="closeRefundModal()"
+                <button type="button" onclick="closeRefundModal()"
                     class="rounded-xl px-5 py-2 border border-gray-600 text-gray-300">
                     Cancel
                 </button>
 
-                <button onclick="submitRefund(${id})"
+                <button type="button" onclick="submitRefund(${id})"
                     class="gold-btn rounded-xl px-5 py-2">
                     Submit
                 </button>
@@ -79,7 +167,6 @@
 
         document.body.appendChild(modal);
     }
-
     function closeRefundModal() {
         document.getElementById('refundModal')?.remove();
     }
@@ -88,7 +175,7 @@
         const reason = document.getElementById('refundReason')?.value.trim();
 
         if (!reason) {
-            alert('Please enter a refund reason.');
+            showRefundToast('Please enter a refund reason.', 'error');
             return;
         }
 
@@ -99,12 +186,50 @@
             });
 
             closeRefundModal();
-            alert('Refund submitted successfully.');
+            showRefundToast('Refund submitted successfully.');
         } catch (e) {
-            alert(e.message);
+            showRefundToast(e.message || 'Something went wrong.', 'error');
         }
     }    requireOrderAuth();loadMyOrders();
 
+
+    function showRefundToast(message) {
+        const oldToast = document.getElementById('refundToast');
+        if (oldToast) oldToast.remove();
+
+        const toast = document.createElement('div');
+        toast.id = 'refundToast';
+
+        toast.innerHTML = `
+        <div style="
+            position: fixed;
+            top: 90px;
+            right: 28px;
+            z-index: 9999;
+            background: rgba(18,18,18,.95);
+            border: 1px solid rgba(202,138,4,.35);
+            color: white;
+            padding: 18px 22px;
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.55);
+            min-width: 280px;
+            animation: slideIn .25s ease both;
+        ">
+            <p style="color:#ca8a04;font-family:serif;font-size:1.1rem;margin-bottom:4px;">
+                Refund Submitted
+            </p>
+            <p style="color:#d1d5db;font-size:.9rem;">
+                ${message}
+            </p>
+        </div>
+    `;
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
 
 </script>
 </body>

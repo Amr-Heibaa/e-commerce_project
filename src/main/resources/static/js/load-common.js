@@ -15,6 +15,30 @@
         while (temp.firstChild) frag.appendChild(temp.firstChild);
         document.body.insertBefore(frag, document.body.firstChild);
 
+        async function loadSidebarCategories() {
+            const submenu = document.getElementById('fragranceSubmenu');
+            if (!submenu) return;
+
+            try {
+                const categories = await api.get('/categories');
+
+                submenu.innerHTML = categories
+                    .filter(c => c.active !== false)
+                    .map(c => `
+                <a href="/products.html?category=${encodeURIComponent(c.name)}"
+                   class="side-sublink">
+                    ${c.name}
+                </a>
+            `)
+                    .join('');
+
+            } catch (e) {
+                console.error('Failed to load sidebar categories:', e);
+            }
+        }
+
+        loadSidebarCategories();
+
         // Highlight active desktop link
         document.querySelectorAll('#desktopNav a').forEach(link => {
             if (isActive(link.getAttribute('href'))) {

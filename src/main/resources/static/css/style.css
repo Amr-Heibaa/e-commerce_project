@@ -12,6 +12,8 @@ body {
     color: var(--cream);
     margin: 0;
     padding: 0;
+    padding-top: 72px;
+
 }
 
 .luxury-bg {
@@ -569,10 +571,12 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 500;
-    background: rgba(0,0,0,.85);
+    z-index: 9999;
+
+    background: rgba(0,0,0,.88);
     backdrop-filter: blur(14px);
     border-bottom: 1px solid rgba(202,138,4,.2);
+
     height: 72px;
     display: flex;
     align-items: center;

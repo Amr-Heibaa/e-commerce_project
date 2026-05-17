@@ -75,7 +75,7 @@ public class SecurityConfig {
                                 "/admin-products.html", "/admin-orders.html",
                                 "/cart.html", "/checkout.html", "/my-orders.html",
                                 "/payment-card.html", "/payment-wallet.html",
-                                "/js/**", "/css/**","/uploads/**","/components/**"
+                                "/js/**", "/css/**","/uploads/**","/videos/**","/components/**"
                         ).permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers(

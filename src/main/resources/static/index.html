@@ -17,13 +17,48 @@
         .fade-up-3 { animation-delay: .34s; }
 
         .hero-section {
-            min-height: 100vh; display: flex; align-items: center;
+            min-height: calc(100vh - 72px);
+            display: flex; align-items: center;
             position: relative; overflow: hidden;
         }
         .hero-section::before {
             content: ''; position: absolute; inset: 0;
             background: radial-gradient(ellipse at 60% 50%, rgba(202,138,4,.08) 0%, transparent 70%);
             pointer-events: none;
+        }
+        .hero-video{
+            position:absolute;
+            inset:0;
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            z-index:0;
+
+            filter:
+                    brightness(1.15)
+                    contrast(1.08)
+                    saturate(1.05);
+        }
+
+        
+        .hero-overlay{
+            position:absolute;
+            inset:0;
+
+            background:
+                    linear-gradient(
+                            to right,
+                            rgba(0,0,0,.55) 0%,
+                            rgba(0,0,0,.25) 45%,
+                            rgba(0,0,0,.45) 100%
+                    );
+
+            z-index:1;
+        }
+
+        .hero-content{
+            position:relative;
+            z-index:2;
         }
         .gold-line {
             width: 60px; height: 1px;
@@ -56,29 +91,63 @@
 <body class="bg-black text-white">
 
 <!-- ══ HERO ════════════════════════════════════════════════ -->
-<section class="hero-section luxury-bg px-8 md:px-16">
-    <div class="max-w-3xl">
+<section class="hero-section px-8 md:px-16">
+
+    <!-- VIDEO BACKGROUND -->
+    <video
+            autoplay
+            muted
+            loop
+            playsinline
+            class="hero-video"
+    >
+        <source
+                src="/videos/vecteezy_blank-luxury-perfume-bottle-on-a-black-background-beside_49989377.mp4"
+                type="video/mp4"
+        >
+    </video>
+
+    <!-- DARK OVERLAY -->
+    <div class="hero-overlay"></div>
+
+    <!-- CONTENT -->
+    <div class="hero-content max-w-3xl">
         <div class="gold-line fade-up fade-up-1"></div>
-        <p class="gold-text uppercase tracking-[0.45em] text-xs mb-5 fade-up fade-up-1">Luxury Fragrance</p>
+
+        <p class="gold-text uppercase tracking-[0.45em] text-xs mb-5 fade-up fade-up-1">
+            Luxury Fragrance
+        </p>
+
         <h1 class="text-5xl md:text-7xl font-serif leading-[1.05] mb-7 fade-up fade-up-2">
-            Discover Your<br /><span class="gold-text">Signature Scent</span>
+            Discover Your<br />
+            <span class="gold-text">Signature Scent</span>
         </h1>
-        <p class="text-gray-400 text-lg max-w-xl mb-10 leading-relaxed fade-up fade-up-3">
+
+        <p class="text-gray-300 text-lg max-w-xl mb-10 leading-relaxed fade-up fade-up-3">
             Rare ingredients, timeless craftsmanship — perfumes for people who live beautifully.
         </p>
+
         <div class="flex gap-4 flex-wrap fade-up fade-up-3">
-            <a href="/products.html" class="gold-btn inline-block rounded-full px-9 py-4 font-medium">
+
+            <a href="/products.html"
+               class="gold-btn inline-block rounded-full px-9 py-4 font-medium">
                 Shop Collection
             </a>
-            <a href="#about" class="inline-block rounded-full px-9 py-4 font-medium text-sm uppercase tracking-widest" style="border:1px solid rgba(202,138,4,.35);color:#ca8a04;transition:background .2s;" onmouseover="this.style.background='rgba(202,138,4,.08)'" onmouseout="this.style.background='transparent'">
+
+            <a href="#about"
+               class="inline-block rounded-full px-9 py-4 font-medium text-sm uppercase tracking-widest"
+               style="border:1px solid rgba(202,138,4,.35);color:#ca8a04;transition:background .2s;"
+               onmouseover="this.style.background='rgba(202,138,4,.08)'"
+               onmouseout="this.style.background='transparent'">
+
                 Our Story
+
             </a>
+
         </div>
     </div>
-    <div style="position:absolute;right:-80px;bottom:-60px;width:500px;height:500px;border-radius:50%;border:1px solid rgba(202,138,4,.06);pointer-events:none;"></div>
-    <div style="position:absolute;right:-30px;bottom:-10px;width:360px;height:360px;border-radius:50%;border:1px solid rgba(202,138,4,.08);pointer-events:none;"></div>
-</section>
 
+</section>
 <!-- ══ FEATURED PRODUCTS ═══════════════════════════════════ -->
 <section id="featured" class="px-8 md:px-16 py-24" style="background:#0a0a0a;">
     <div class="text-center mb-14">
@@ -119,8 +188,49 @@
             </div>
         </div>
         <div style="position:relative;">
-            <div style="width:100%;aspect-ratio:3/4;background:rgba(202,138,4,.06);border:1px solid rgba(202,138,4,.15);border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:5rem;color:rgba(202,138,4,.2);">🏺</div>
-            <div style="position:absolute;bottom:-20px;right:-20px;width:120px;height:120px;background:rgba(202,138,4,.08);border:1px solid rgba(202,138,4,.2);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2rem;">✨</div>
+
+            <!-- MAIN IMAGE -->
+            <div style="
+        width:100%;
+        aspect-ratio:3/4;
+        border-radius:24px;
+        overflow:hidden;
+        border:1px solid rgba(202,138,4,.15);
+        background:#111;
+    ">
+
+                <img
+                        src="https://efeperfumes.com/wp-content/uploads/2026/03/Empire-d-Amour-oil07_19-53-43-225-600x750.webp"
+                        alt="Luxury Perfume"
+                        style="
+                width:100%;
+                height:100%;
+                object-fit:cover;
+                display:block;
+            "
+                />
+
+            </div>
+
+            <!-- FLOATING BADGE -->
+            <div style="
+        position:absolute;
+        bottom:-20px;
+        right:-20px;
+        width:120px;
+        height:120px;
+        background:rgba(202,138,4,.08);
+        border:1px solid rgba(202,138,4,.2);
+        border-radius:16px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:2rem;
+        backdrop-filter:blur(10px);
+    ">
+                ✨
+            </div>
+
         </div>
     </div>
 </section>
